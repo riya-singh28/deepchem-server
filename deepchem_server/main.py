@@ -1,8 +1,7 @@
-import os
-from fastapi import FastAPI, Depends, status, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from deepchem_server.routers import primitives
+from deepchem_server.routers import primitives, data
 
 import logging
 
@@ -12,6 +11,7 @@ logger.setLevel(logging.INFO)
 app = FastAPI()
 
 app.include_router(primitives.router)
+app.include_router(data.router)
 
 origins = [
     "http://localhost:4200",

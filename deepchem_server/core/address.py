@@ -1,9 +1,9 @@
 import os
-from core import config
+from deepchem_server.core import config
 from typing import Optional
 
-DEEPCHEM_ADDRESS_PREFIX = 'deepchem://'
 
+DEEPCHEM_ADDRESS_PREFIX = 'deepchem://'
 
 class DeepchemAddress(object):
     """

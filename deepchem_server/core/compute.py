@@ -1,7 +1,7 @@
 import deepchem_server.core as core
 
 program_map = {
-    'featurize': core.feat.featurize
+    'featurize': core.featurize
 }
 
 class ComputeWorkflow:
@@ -19,7 +19,6 @@ class ComputeWorkflow:
         """Initialize Worfklow."""
         self.program = program
 
-    # TODO: Should this live elsewhere?
     def execute(self):
         """Runs the set of commands in this workflow."""
         if 'program_name' not in self.program:

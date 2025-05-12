@@ -44,7 +44,7 @@ async def featurize(profile_name: str,
         'featurizer': featurizer,
         'output': output,
         'dataset_column': dataset_column,
-        'feat_kwargs': feat_kwargs,
+        'feat_kwargs': feat_kwargs['feat_kwargs'],
         'label_column': label_column,
     }
 
@@ -52,4 +52,4 @@ async def featurize(profile_name: str,
                      project_name=project_name,
                      program=program)
 
-    return {"result": output}
+    return {"featurized_file_address": output}
