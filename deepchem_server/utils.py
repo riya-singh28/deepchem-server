@@ -3,13 +3,16 @@ from deepchem_server.core import config
 from deepchem_server.core.datastore import DiskDataStore
 from deepchem_server.core.compute import ComputeWorkflow
 
+DATA_DIR = os.getenv("DATADIR", "/data")
+
 
 def _init_datastore(profile_name: str,
                     project_name: str,
                     backend='local'):
     if backend == 'local':
         datastore = DiskDataStore(profile_name=profile_name,
-                                  project_name=project_name)
+                                  project_name=project_name,
+                                  basedir=DATA_DIR)
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
     return datastore
