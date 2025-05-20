@@ -1,7 +1,6 @@
 version: '3.8'
-
 services:
-  web-server:
+  deepchem-server:
     build: .
     ports:
       - "8000:8000"
@@ -9,4 +8,4 @@ services:
       - ${DATA_DIR:-./data}:/data
     environment:
       - DATADIR=/data
-    container_name: deepchem_server
+    restart: always

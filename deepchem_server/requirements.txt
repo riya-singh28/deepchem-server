@@ -1,4 +1,5 @@
 pandas
+python-multipart
 fastapi
 uvicorn[standard]
 numpy<1.24
