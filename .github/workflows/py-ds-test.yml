@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'deepchem_server/**'
-      - 'scripts/**'
   workflow_dispatch:
 
 jobs:
