@@ -194,7 +194,7 @@ class DeepchemAddress(object):
         except ValueError:
             # Address is not in the form deepchem://profile/project/key
             if not address.startswith(storage_loc):
-                address = deepchem_ADDRESS_PREFIX + storage_loc.strip(
+                address = DEEPCHEM_ADDRESS_PREFIX + storage_loc.strip(
                     '/') + '/' + address
             address_key = DeepchemAddress.get_key(address)
             if format == 's3':
