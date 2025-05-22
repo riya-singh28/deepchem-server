@@ -1,3 +1,4 @@
+import os
 import requests
 from http import HTTPStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -69,11 +70,13 @@ def test_upload_csv():
     profile_name = 'test-profile'
     project_name = 'test-project'
 
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
     dataset_address = uploadfile(
                 profile_name = profile_name,
                 project_name = project_name,
                 datastore_filename='zinc10_sample.csv',
-                filename='./assets/zinc10.csv',
+                filename = os.path.join(base_path, 'assets/zinc10.csv'),
                 description='Sample test csv file')
 
     if dataset_address is None:
@@ -89,11 +92,13 @@ def test_featurize():
     profile_name = 'test-profile'
     project_name = 'test-project'
 
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
     dataset_address = uploadfile(
                 profile_name = profile_name,
                 project_name = project_name,
                 datastore_filename='zinc10_sample.csv',
-                filename='./assets/zinc10.csv',
+                filename=os.path.join(base_path, 'assets/zinc10.csv'),
                 description='Sample test csv file')
     
     featurized_file_address = featurize(profile_name,
