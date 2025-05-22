@@ -2,6 +2,7 @@ import os
 from deepchem_server.core import config
 from deepchem_server.core.datastore import DiskDataStore
 from deepchem_server.core.compute import ComputeWorkflow
+from typing import Dict
 
 DATA_DIR = os.getenv("DATADIR", "/data")
 
@@ -9,6 +10,18 @@ DATA_DIR = os.getenv("DATADIR", "/data")
 def _init_datastore(profile_name: str,
                     project_name: str,
                     backend='local'):
+    """
+    Function to initialise the datastore in DATA_DIR
+
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    backend: str
+        Backend to be used to run the job (Default: local)
+    """
     if backend == 'local':
         datastore = DiskDataStore(profile_name=profile_name,
                                   project_name=project_name,
@@ -20,9 +33,21 @@ def _init_datastore(profile_name: str,
 
 def run_job(profile_name: str,
             project_name: str,
-            program: str,
+            program: Dict,
             backend: str = 'local'):
     """
+    Function to run jobs based on the submitted program
+
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    program: Dict
+        Program dictionary containing program name and kwargs
+    backend: str
+        Backend to be used to run the job (Default: local)
     """
     if backend == 'local':
         print("beginning")
@@ -43,24 +68,23 @@ def run_job(profile_name: str,
 
 def _upload_data(profile_name, project_name, datastore_filename, contents, data_card, backend='local'):
     """
-  A wrapper method to the server for creating S3DataStore object and using
-  it to upload data files
+    A wrapper method to the server for creating DataStore object and using
+    it to upload data files
 
-  Parameters
-  ----------
-  project: Project
-  backend: str
-    user backend ('aws', 'local')
-  working_dir: str
-    preferred working_dir of the user
-  datastore_filename: str
-    The file name in which data is to be written in S3DataStore
-  contents: object
-    The filepath in disk or file object in memory from which
-  data will be read for writing to datastore
-  data_card: dict
-    data card for the file
-  """
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    datastore_filename: str
+        The file name in which data is to be written in DataStore
+    contents: object
+        The filepath in disk or file object in memory from which
+        data will be read for writing to datastore
+    data_card: dict
+        data card for the file
+    """
     datastore = _init_datastore(profile_name=profile_name,
                                     project_name=project_name,
                                     backend=backend)

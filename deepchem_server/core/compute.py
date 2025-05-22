@@ -1,4 +1,5 @@
 import deepchem_server.core as core
+from typing import Any, Dict
 
 program_map = {
     'featurize': core.featurize
@@ -7,20 +8,25 @@ program_map = {
 class ComputeWorkflow:
     """A Compute Workflow is a workflow that runs on Deepchem Server.
 
-    The compute workflow encapsulates the concept of a
-    workflow on Deepchem Server. A workflow is a series of 
-    Deepchem Server primitive commands that update the state of the
-    underlying datastore. Users can specify workflows
-    using a simple programming language and can execute
-    workflows if their personal budgets permit.
+    Examples
+    --------
+    >>> program = program = {
+    ... 'program_name': 'featurize',
+    ... 'dataset_address': 'deepchem://profile_name/project_name/data.csv',
+    ... 'featurizer': 'ecfp',
+    ... 'output': 'test_output',
+    ... 'dataset_column': 'smiles',
+    ... 'feat_kwargs': {'size': 1024},
+    ... 'label_column': 'y',
+    ... }
     """
 
-    def __init__(self, program):
+    def __init__(self, program: Dict):
         """Initialize Worfklow."""
         self.program = program
 
-    def execute(self):
-        """Runs the set of commands in this workflow."""
+    def execute(self) -> Any: 
+        """Runs the program in Dictionary format based on  `program_name` in program"""
         if 'program_name' not in self.program:
             raise ValueError("program_name not found in program")
         program_name = self.program['program_name']

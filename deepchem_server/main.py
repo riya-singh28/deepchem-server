@@ -33,4 +33,7 @@ async def on_startup():
 
 @app.get("/healthcheck")
 async def perform_healthcheck():
+    """
+    HealthCheck endpoint to check server status
+    """
     return JSONResponse(status_code=200, content={"status": "ok"})

@@ -18,9 +18,24 @@ async def upload_data(file: UploadFile = File(...),
                       project_name: str = Form(None),
                       filename: str = Form(None),
                       description: Union[Dict, str] = Form(None),
-                      backend='local'):
+                      backend='local') -> Dict:
     """
     Upload data to datastore
+
+    Parameters
+    ----------
+    file: UploadFile
+        A file uploaded in a request
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    filename: str
+        File name to save the uploaded file
+    description: Union[Dict, str]
+        Description of the file
+    backend: str
+        Backend to be used to run the job (Default: local)
     """
     contents = await file.read()
     print(contents)
