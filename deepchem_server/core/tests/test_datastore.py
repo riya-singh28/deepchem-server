@@ -179,7 +179,8 @@ def test_png_upload_get(disk_datastore):
     Test upload and get of png file in disk datastore
     """
     tempdir = tempfile.TemporaryDirectory()
-    im = Image.open('./assets/test-image.png')
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    im = Image.open(os.path.join(base_path, 'assets/test-image.png'))
     path = os.path.join(tempdir.name, 'file.png')
     im.save(path)
     card = DataCard(address='', file_type='png', data_type='png')
@@ -196,7 +197,8 @@ def test_txt_upload_get_delete(disk_datastore):
     Test upload and get of txt file in disk datastore
     """
     # The file is present in the assets folder
-    path = './assets/log.txt'
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(base_path,'assets/log.txt')
     card = DataCard(address='', file_type='txt', data_type='text/plain')
     file_address = disk_datastore.upload_data('log.txt', path, card)
 
@@ -219,7 +221,8 @@ def test_xml_upload_get_delete(disk_datastore):
     Test upload and get of XML file in disk datastore
     """
     # The file is present in the assets folder
-    path = './assets/sample.xml'
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(base_path, 'assets/sample.xml')
     card = DataCard(address='', file_type='xml', data_type='text/plain')
     file_address = disk_datastore.upload_data('sample.xml', path, card)
 
@@ -239,7 +242,6 @@ def test_get_file_size_disk_datastore(disk_datastore):
     """
     Test get_file_size_in_bytes method
     """
-    # The file is present in the assets folder
     tempdir = tempfile.TemporaryDirectory()
     df = pd.DataFrame({'test': [0, 1, 2, 3, 4]})
     path = os.path.join(tempdir.name, 'file.csv')
