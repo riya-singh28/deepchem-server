@@ -29,15 +29,10 @@ jobs:
 
       - name: Check type hints deepchem_server
         continue-on-error: false 
-        run: mypy -p deepchem_server \
-            --follow-imports=skip \
-            --ignore-missing-imports
-
+        run: mypy -p deepchem_server
       - name: Check type hints py-ds
         continue-on-error: false 
-        run: mypy -p py-ds \
-            --follow-imports=skip \
-            --ignore-missing-imports
+        run: mypy -p py-ds
 
   yapf:
     runs-on: ubuntu-latest
