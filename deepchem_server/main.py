@@ -13,18 +13,13 @@ app = FastAPI()
 app.include_router(primitives.router)
 app.include_router(data.router)
 
-origins = [
-    "http://localhost:4200",
-    "https://localhost:4200",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.on_event("startup")
 async def on_startup():

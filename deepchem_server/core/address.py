@@ -2,8 +2,8 @@ import os
 from deepchem_server.core import config
 from typing import Optional
 
-
 DEEPCHEM_ADDRESS_PREFIX = 'deepchem://'
+
 
 class DeepchemAddress(object):
     """
@@ -24,7 +24,7 @@ class DeepchemAddress(object):
     >>> address = 'deepchem://profile/project/zinc.csv'
     >>> deepchem_address = DeepchemAddress(address)
     """
-    address_prefix = 'deepchem://'
+    address_prefix: str = 'deepchem://'
 
     def __init__(self, address: str, kind: Optional[str] = 'data'):
         if address.startswith(DeepchemAddress.address_prefix):

@@ -6,8 +6,12 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 BACKEND_URL = "http://0.0.0.0:8000/"
 _SESSION = None
 
-def uploadfile(profile_name, project_name, datastore_filename, filename, description=''):
-    global _SESSION
+
+def uploadfile(profile_name,
+               project_name,
+               datastore_filename,
+               filename,
+               description=''):
     m = MultipartEncoder(
         fields={
             'filename': datastore_filename,
@@ -17,8 +21,8 @@ def uploadfile(profile_name, project_name, datastore_filename, filename, descrip
             'description': description
         })
     response = _SESSION.post(BACKEND_URL + "data/uploaddata",
-                         data=m,
-                         headers={'Content-Type': m.content_type})
+                             data=m,
+                             headers={'Content-Type': m.content_type})
     if response.status_code == HTTPStatus.OK.value:
         response = response.json()
         return response['dataset_address']
@@ -32,19 +36,19 @@ def uploadfile(profile_name, project_name, datastore_filename, filename, descrip
     return None
 
 
-def featurize(profile_name,
-              project_name,
-              dataset_address,
-              featurizer,
-              output,
-              dataset_column,
-              label_column,
-              feat_kwargs = {},
-              ):
-    global _SESSION
+def featurize(
+    profile_name,
+    project_name,
+    dataset_address,
+    featurizer,
+    output,
+    dataset_column,
+    label_column,
+    feat_kwargs={},
+):
     params = {
-        'profile_name': profile_name, 
-        'project_name': project_name, 
+        'profile_name': profile_name,
+        'project_name': project_name,
         'dataset_address': dataset_address,
         'featurizer': featurizer,
         'output': output,
@@ -54,9 +58,8 @@ def featurize(profile_name,
 
     json_params = {'feat_kwargs': feat_kwargs}
     api_path = "primitive/featurize"
-    api_endpoint = BACKEND_URL+api_path
-    response = _SESSION.post(api_endpoint,
-                                    params=params, json=json_params)
+    api_endpoint = BACKEND_URL + api_path
+    response = _SESSION.post(api_endpoint, params=params, json=json_params)
     if response.status_code == HTTPStatus.OK.value:
         response = response.json()
         return response['featurized_file_address']
@@ -72,12 +75,12 @@ def test_upload_csv():
 
     base_path = os.path.dirname(os.path.abspath(__file__))
 
-    dataset_address = uploadfile(
-                profile_name = profile_name,
-                project_name = project_name,
-                datastore_filename='zinc10_sample.csv',
-                filename = os.path.join(base_path, 'assets/zinc10.csv'),
-                description='Sample test csv file')
+    dataset_address = uploadfile(profile_name=profile_name,
+                                 project_name=project_name,
+                                 datastore_filename='zinc10_sample.csv',
+                                 filename=os.path.join(base_path,
+                                                       'assets/zinc10.csv'),
+                                 description='Sample test csv file')
 
     if dataset_address is None:
         raise Exception("CSV file upload failed")
@@ -94,21 +97,22 @@ def test_featurize():
 
     base_path = os.path.dirname(os.path.abspath(__file__))
 
-    dataset_address = uploadfile(
-                profile_name = profile_name,
-                project_name = project_name,
-                datastore_filename='zinc10_sample.csv',
-                filename=os.path.join(base_path, 'assets/zinc10.csv'),
-                description='Sample test csv file')
-    
-    featurized_file_address = featurize(profile_name,
-              project_name,
-              dataset_address,
-              featurizer='ecfp',
-              output='test_featurized',
-              dataset_column='smiles',
-              label_column='logp',
-              feat_kwargs = {'size': 1024},
-              )
-    
+    dataset_address = uploadfile(profile_name=profile_name,
+                                 project_name=project_name,
+                                 datastore_filename='zinc10_sample.csv',
+                                 filename=os.path.join(base_path,
+                                                       'assets/zinc10.csv'),
+                                 description='Sample test csv file')
+
+    featurized_file_address = featurize(
+        profile_name,
+        project_name,
+        dataset_address,
+        featurizer='ecfp',
+        output='test_featurized',
+        dataset_column='smiles',
+        label_column='logp',
+        feat_kwargs={'size': 1024},
+    )
+
     assert featurized_file_address == f'deepchem://{profile_name}/{project_name}/test_featurized'

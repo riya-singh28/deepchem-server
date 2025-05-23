@@ -32,10 +32,11 @@ def test_featurize_nested_full_address(disk_datastore):
         df, "test feat/test.csv", card)
     assert data_address == "deepchem://test/user/test feat/test.csv"
 
-    dataset_address = featurize(data_address,
-                                featurizer="ecfp",
-                                output="deepchem://test/user/test feat/feat_test",
-                                dataset_column="smiles")
+    dataset_address = featurize(
+        data_address,
+        featurizer="ecfp",
+        output="deepchem://test/user/test feat/feat_test",
+        dataset_column="smiles")
     assert dataset_address == "deepchem://test/user/test feat/feat_test"
 
     data = disk_datastore.get(dataset_address)

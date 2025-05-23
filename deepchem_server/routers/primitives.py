@@ -5,18 +5,23 @@ from fastapi.responses import JSONResponse
 from deepchem_server.utils import run_job
 from deepchem_server.core.feat import featurizer_map
 
-router = APIRouter(prefix="/primitive",
-                   tags=["primitive"],)
+router = APIRouter(
+    prefix="/primitive",
+    tags=["primitive"],
+)
+
 
 @router.post("/featurize")
-async def featurize(profile_name: str,
-                    project_name: str,
-                    dataset_address: str,
-                    featurizer: str,
-                    output: str,
-                    dataset_column: str,
-                    feat_kwargs: Dict = dict(),
-                    label_column: Optional[str] = None,) -> Dict:
+async def featurize(
+        profile_name: str,
+        project_name: str,
+        dataset_address: str,
+        featurizer: str,
+        output: str,
+        dataset_column: str,
+        feat_kwargs: Dict = dict(),
+        label_column: Optional[str] = None,
+) -> Dict:
     """
     Submits a featurization job
 
@@ -56,7 +61,7 @@ async def featurize(profile_name: str,
             elif value.lower() == "none":
                 feat_kwargs['feat_kwargs'][key] = None
 
-    program = {
+    program: Dict = {
         'program_name': 'featurize',
         'dataset_address': dataset_address,
         'featurizer': featurizer,

@@ -10,7 +10,6 @@ def set_datastore(datastore):
 
 
 def get_datastore() -> Union[DiskDataStore, None]:
-    global _DATASTORE
     return _DATASTORE
 
 

@@ -31,6 +31,7 @@ KIND_LIST = [{
 # Number of rows to get when fetching a sample instead of full data (works only for csv)
 DEFAULT_SAMPLE_ROWS = 100  # for disk datastore
 
+
 def _get_csv_or_dataframe_shape(*,
                                 filename: Optional[str] = None,
                                 dataframe: Optional[pd.DataFrame] = None):
@@ -81,7 +82,8 @@ class DataStore:
         """
         raise NotImplementedError
 
-    def get(self, deepchem_address: str, kind: Optional[str], fetch_sample: bool):
+    def get(self, deepchem_address: str, kind: Optional[str],
+            fetch_sample: bool):
         """Fetch something from datastore at address.
 
         Parameters
@@ -195,7 +197,7 @@ class DiskDataStore(DataStore):
           dataset address for the dataset in question.
         """
         dataset_address = DeepchemAddress(self.address_prefix +
-                                        datastore_filename).address
+                                          datastore_filename).address
         dest_loc = os.path.join(self.storage_loc, datastore_filename)
 
         dir_path = os.path.dirname(dest_loc)
@@ -278,7 +280,7 @@ class DiskDataStore(DataStore):
            dataset address for the dataset in question.
         """
         dataset_address = DeepchemAddress(self.address_prefix +
-                                        datastore_filename).address
+                                          datastore_filename).address
         card.address = dataset_address
         dest_loc = os.path.join(self.storage_loc, datastore_filename)
         if isinstance(card, DataCard) and datastore_filename.endswith('.csv'):
@@ -413,7 +415,8 @@ class DiskDataStore(DataStore):
             If request failed, returns None. Else returns the deepchem server
             model address for the uploaded model.
         """
-        model_address = DeepchemAddress(self.address_prefix + model_name).address
+        model_address = DeepchemAddress(self.address_prefix +
+                                        model_name).address
         card.address = model_address
         dest_loc = os.path.join(self.storage_loc, model_name)
         dir_path = os.path.dirname(dest_loc)

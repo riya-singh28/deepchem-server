@@ -1,6 +1,6 @@
 import os
 from deepchem_server.core import config
-from deepchem_server.core.datastore import DiskDataStore
+from deepchem_server.core.datastore import DataStore, DiskDataStore
 from deepchem_server.core.compute import ComputeWorkflow
 from typing import Dict
 
@@ -9,7 +9,7 @@ DATA_DIR = os.getenv("DATADIR", "/data")
 
 def _init_datastore(profile_name: str,
                     project_name: str,
-                    backend='local'):
+                    backend='local') -> DataStore:
     """
     Function to initialise the datastore in DATA_DIR
 
@@ -23,9 +23,9 @@ def _init_datastore(profile_name: str,
         Backend to be used to run the job (Default: local)
     """
     if backend == 'local':
-        datastore = DiskDataStore(profile_name=profile_name,
-                                  project_name=project_name,
-                                  basedir=DATA_DIR)
+        datastore: DataStore = DiskDataStore(profile_name=profile_name,
+                                             project_name=project_name,
+                                             basedir=DATA_DIR)
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
     return datastore
@@ -51,9 +51,9 @@ def run_job(profile_name: str,
     """
     if backend == 'local':
         print("beginning")
-        datastore = _init_datastore(profile_name=profile_name,
-                                    project_name=project_name,
-                                    backend=backend)
+        datastore: DataStore = _init_datastore(profile_name=profile_name,
+                                               project_name=project_name,
+                                               backend=backend)
         config.set_datastore(datastore)
         workflow = ComputeWorkflow(program)
         try:
@@ -66,7 +66,12 @@ def run_job(profile_name: str,
         raise NotImplementedError(f"{backend} backend not implemented")
 
 
-def _upload_data(profile_name, project_name, datastore_filename, contents, data_card, backend='local'):
+def _upload_data(profile_name,
+                 project_name,
+                 datastore_filename,
+                 contents,
+                 data_card,
+                 backend='local'):
     """
     A wrapper method to the server for creating DataStore object and using
     it to upload data files
@@ -86,8 +91,8 @@ def _upload_data(profile_name, project_name, datastore_filename, contents, data_
         data card for the file
     """
     datastore = _init_datastore(profile_name=profile_name,
-                                    project_name=project_name,
-                                    backend=backend)
+                                project_name=project_name,
+                                backend=backend)
     import tempfile
     tempdir = tempfile.TemporaryDirectory()
     temppath = os.path.join(tempdir.name, datastore_filename.replace('/', '_'))

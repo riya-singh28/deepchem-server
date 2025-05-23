@@ -11,7 +11,6 @@ import multiprocessing as mp
 from rdkit import Chem
 from deepchem_server.core.address import DeepchemAddress
 
-
 featurizer_map = {
     "ecfp": dc.feat.CircularFingerprint,
     "graphconv": dc.feat.ConvMolFeaturizer,
@@ -296,8 +295,7 @@ def featurize(dataset_address: str,
         if "features_generator" in feat_kwargs:
             feat_generator = feat_kwargs["features_generator"]
             feat_kwargs_restore["features_generator"] = feat_generator
-            feat_kwargs["features_generator"] = featurizer_map[
-                feat_generator]()
+            feat_kwargs["features_generator"] = featurizer_map[feat_generator]()
         feat = featurizer_map[featurizer](**feat_kwargs)
     else:
         feat = featurizer_map[featurizer]()

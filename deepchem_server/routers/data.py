@@ -4,12 +4,10 @@ from fastapi import APIRouter, UploadFile, File, Form
 from deepchem_server.core.cards import DataCard
 from deepchem_server.utils import _upload_data
 
-
 logger = logging.getLogger("backend_logs")
 logger.setLevel(logging.INFO)
 
-router = APIRouter(prefix="/data",
-                   tags=["data"])
+router = APIRouter(prefix="/data", tags=["data"])
 
 
 @router.post("/uploaddata")
@@ -47,8 +45,8 @@ async def upload_data(file: UploadFile = File(...),
         if file_type in ['csv', 'parquet']:
             data_type = 'pandas.DataFrame'
         elif file_type in [
-                'pdb', 'sdf', 'fasta', 'fastq', 'sdf', 'txt', 'xml',
-                'pdbqt', 'smi', 'smiles', 'cxsmiles', 'json'
+                'pdb', 'sdf', 'fasta', 'fastq', 'sdf', 'txt', 'xml', 'pdbqt',
+                'smi', 'smiles', 'cxsmiles', 'json'
         ]:
             data_type = 'text/plain'
         elif file_type in ['dcd', 'bz2', 'zip', 'onnx', 'hdf5']:
@@ -64,5 +62,10 @@ async def upload_data(file: UploadFile = File(...),
     else:
         card = description
 
-    address = _upload_data(profile_name, project_name, filename, contents, card, backend=backend)
+    address: str = _upload_data(profile_name,
+                                project_name,
+                                filename,
+                                contents,
+                                card,
+                                backend=backend)
     return {"dataset_address": address}

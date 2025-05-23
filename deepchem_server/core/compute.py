@@ -1,9 +1,8 @@
 import deepchem_server.core as core
 from typing import Any, Dict
 
-program_map = {
-    'featurize': core.featurize
-}
+program_map = {'featurize': core.featurize}
+
 
 class ComputeWorkflow:
     """A Compute Workflow is a workflow that runs on Deepchem Server.
@@ -23,16 +22,20 @@ class ComputeWorkflow:
 
     def __init__(self, program: Dict):
         """Initialize Worfklow."""
-        self.program = program
+        self.program: Dict = program
 
-    def execute(self) -> Any: 
+    def execute(self) -> Any:
         """Runs the program in Dictionary format based on  `program_name` in program"""
         if 'program_name' not in self.program:
             raise ValueError("program_name not found in program")
-        program_name = self.program['program_name']
-        params = {key: value for key, value in self.program.items() if key != 'program_name'}
+        program_name: str = self.program['program_name']
+        params: Dict = {
+            key: value
+            for key, value in self.program.items()
+            if key != 'program_name'
+        }
         if program_name not in program_map:
             raise ValueError(f"{program_name} not in available programs")
 
-        output = program_map[program_name](**params)
+        output: Any = program_map[program_name](**params)
         return output

@@ -72,30 +72,33 @@ class TestDeepchemAddress(unittest.TestCase):
         # local format
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc1,
-                                   self.address1.address,
-                                   format='local'), local_format1)
+                                     self.address1.address,
+                                     format='local'), local_format1)
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc2,
-                                   self.address2.address,
-                                   format='local'), local_format2)
+                                     self.address2.address,
+                                     format='local'), local_format2)
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc3,
-                                   self.address3.address,
-                                   format='local'), local_format3)
+                                     self.address3.address,
+                                     format='local'), local_format3)
 
         # local format with only key
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc1,
-                                   DeepchemAddress.get_key(self.address1.address),
-                                   format='local'), local_format1)
+                                     DeepchemAddress.get_key(
+                                         self.address1.address),
+                                     format='local'), local_format1)
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc2,
-                                   DeepchemAddress.get_key(self.address2.address),
-                                   format='local'), local_format2)
+                                     DeepchemAddress.get_key(
+                                         self.address2.address),
+                                     format='local'), local_format2)
         self.assertEqual(
             DeepchemAddress.get_path(local_storage_loc3,
-                                   DeepchemAddress.get_key(self.address3.address),
-                                   format='local'), local_format3)
+                                     DeepchemAddress.get_key(
+                                         self.address3.address),
+                                     format='local'), local_format3)
 
     def test_get_parent_key(self):
         self.assertEqual(DeepchemAddress.get_parent_key(self.address1.address),
