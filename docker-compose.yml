@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  deepchem-server:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${DATA_DIR:-./data}:/data
+    environment:
+      - DATADIR=/data
+    restart: always
