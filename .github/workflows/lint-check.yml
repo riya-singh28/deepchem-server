@@ -25,14 +25,16 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install mypy
+        run: | 
+          pip install mypy
+          pip install types-requests
 
       - name: Check type hints deepchem_server
         continue-on-error: false 
         run: mypy -p deepchem_server
       - name: Check type hints py-ds
         continue-on-error: false
-        run: mypy --install-types -p py-ds
+        run: mypy -p py-ds
 
   yapf:
     runs-on: ubuntu-latest
