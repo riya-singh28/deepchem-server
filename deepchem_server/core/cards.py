@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-# mypy errors ignored because ModelCard yet to added
 import ast
 import json
 import datetime

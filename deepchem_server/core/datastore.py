@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# mypy errors ignored because ModelCard yet to added
 from __future__ import annotations
 import os
 import json
