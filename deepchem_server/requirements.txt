@@ -1,6 +1,7 @@
 pandas
 python-multipart
 fastapi
+pytest
 uvicorn[standard]
 numpy<1.24
 scikit-learn==1.3.2
