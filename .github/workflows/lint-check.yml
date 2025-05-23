@@ -32,9 +32,7 @@ jobs:
         run: mypy -p deepchem_server
       - name: Check type hints py-ds
         continue-on-error: false
-        run: |
-          pip install --no-cache-dir -r py-ds/requirements.txt
-          mypy -p py-ds
+        run: mypy --install-types -p py-ds
 
   yapf:
     runs-on: ubuntu-latest
