@@ -198,7 +198,7 @@ def test_txt_upload_get_delete(disk_datastore):
     """
     # The file is present in the assets folder
     base_path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(base_path,'assets/log.txt')
+    path = os.path.join(base_path, 'assets/log.txt')
     card = DataCard(address='', file_type='txt', data_type='text/plain')
     file_address = disk_datastore.upload_data('log.txt', path, card)
 

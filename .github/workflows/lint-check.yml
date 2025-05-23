@@ -29,13 +29,16 @@ jobs:
 
       - name: Check type hints deepchem_server
         continue-on-error: false 
-        run: mypy -p deepchem_server \
-            --follow-imports skip \
+        run: mypy \
+            -p deepchem_server \
+            --follow-imports=skip \
             --ignore-missing-imports
+
       - name: Check type hints py-ds
         continue-on-error: false 
-        run: mypy -p py-ds \
-            --follow-imports skip \
+        run: mypy \
+            -p py-ds \
+            --follow-imports=skip \
             --ignore-missing-imports
 
   yapf:
