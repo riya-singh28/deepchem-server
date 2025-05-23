@@ -175,7 +175,7 @@ def test_featurize_with_label(disk_datastore):
     assert card.featurizer == 'ecfp'
 
 
-def test_featurize_with_feat_kwargs(disk_datastore, smiles_csv):
+def test_featurize_with_feat_kwargs(disk_datastore):
     """Test featurize method with feat_kwargs"""
     df = pd.DataFrame([["CCC", 0], ["CCCCC", 1]], columns=["smiles", "label"])
     config.set_datastore(disk_datastore)
