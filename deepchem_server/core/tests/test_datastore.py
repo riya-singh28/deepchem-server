@@ -415,8 +415,12 @@ def test_disk_datastore_upload_model_from_memory(disk_datastore):
     """Test uploading model."""
     filenames = ['checkpoint1.pt', 'config.yaml']
     files = [
-        open('./assets/models/gcn/checkpoint1.pt', 'rb'),
-        open('./assets/models/gcn/config.yaml', 'rb')
+        open(
+            os.path.join(os.path.dirname(__file__),
+                         './assets/models/gcn/checkpoint1.pt'), 'rb'),
+        open(
+            os.path.join(os.path.dirname(__file__),
+                         './assets/models/gcn/config.yaml'), 'rb')
     ]
     card = ModelCard(address='', train_dataset_address='', model_type='gcn')
     model_address = disk_datastore.upload_model_from_memory(
@@ -437,8 +441,12 @@ def test_disk_datastore_upload_nested_model_from_memory(disk_datastore):
     """Test uploading nested model from memory."""
     filenames = ['checkpoint1.pt', 'config.yaml']
     files = [
-        open('./assets/models/gcn/checkpoint1.pt', 'rb'),
-        open('./assets/models/gcn/config.yaml', 'rb')
+        open(
+            os.path.join(os.path.dirname(__file__),
+                         './assets/models/gcn/checkpoint1.pt'), 'rb'),
+        open(
+            os.path.join(os.path.dirname(__file__),
+                         './assets/models/gcn/config.yaml'), 'rb')
     ]
     card = ModelCard(address='', train_dataset_address='', model_type='gcn')
     model_address = disk_datastore.upload_model_from_memory(
