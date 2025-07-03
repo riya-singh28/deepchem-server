@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 class DeepChemModelConfigMapper:
-    """
+    """Mappings between models and their configuration in Deepchem.
+
     This class contains mappings between the models and their configuration in
     Deepchem. It is used to generate the model cards while uploading
     models.
@@ -39,27 +40,76 @@ class DeepChemModelConfigMapper:
         train_args:
           nb_epoch: 1
         description: Description of the model (will be stored in the model card)
+
+    Parameters
+    ----------
+    model_class : Any
+        The model class in Deepchem.
+    model_class_name : str, optional
+        The name of the model class. If not provided, will be inferred.
+    required_init_params : list, optional
+        A list of required init parameters.
+    optional_init_params : list, optional
+        A list of optional init parameters.
+    required_train_params : list, optional
+        A list of required train parameters.
+    optional_train_params : list, optional
+        A list of optional train parameters.
+    tasks : dict, optional
+        A Dictionary of tasks mapped to their respective parameter name supported by the model.
+
+    Examples
+    --------
+    >>> from deepchem_server.core.mappings import DeepChemModelConfigMapper
+    >>> from deepchem.models import GCNModel
+    >>> model = DeepChemModelConfigMapper(
+    ... model_class=GCNModel,
+    ... required_init_params=["init_param"],
+    ... optional_init_params=["init_param1", "init_param2"],
+    ... required_train_params=["train_param"],
+    ... optional_train_params=["train_param1", "train_param2"])
+    >>> model.get_model_class_name()
+    'gcn'
+    >>> model.get_model_class()
+    <class 'deepchem.models.torch_models.gcn.GCNModel'>
+    >>> model
+    <class 'deepchem.models.torch_models.gcn.GCNModel'>
+    >>> model.add_init_params(["test_required_init_param"])
+    >>> model.get_init_params("required")
+    ['init_param', 'test_required_init_param']
+    >>> model.add_init_params(["test_optional_init_param"], "optional")
+    >>> model.get_init_params("optional")
+    ['init_param1', 'init_param2', 'test_optional_init_param']
+    >>> model.get_init_params()
+    {'required': ['init_param', 'test_required_init_param'],
+    'optional': ['init_param1', 'init_param2', 'test_optional_init_param']}
+    >>> model.add_tasks({"task1": "task", "task2": "mode"})
+    >>> model.get_tasks()
+    {'task1': 'task', 'task2': 'mode'}
+
+    In the above example, the model tasks are mapped to their respective parameter name supported by the model.
+    For example, the task "task1" is mapped to parameter "task" and the task so, during model initialization,
+    if "task1" is provided as a task, then the parameter "task" will be used to initialize the model. Similarly,
+    if "task2" is provided as a task, then the parameter "mode" will be used to initialize the model.
     """
 
     @staticmethod
-    def parse_params(required_params: Optional[List],
-                     optional_params: Optional[List]) -> dict:
-        """
-        This function parses the required and optional parameters of the
-        model and returns a dictionary with the required and optional
-        parameters.
+    def parse_params(required_params: Optional[List], optional_params: Optional[List]) -> Dict:
+        """Parse the required and optional parameters of the model.
 
-        Parameters:
-        -----------
-        required_params: List (optional)
-            A list of required parameters
-        optional_params: List (optional)
-            A list of optional parameters
+        Returns a dictionary with the required and optional parameters.
 
-        Returns:
-        --------
-        params: dict
-            A dictionary containing the required and optional parameters
+        Parameters
+        ----------
+        required_params : list, optional
+            A list of required parameters.
+        optional_params : list, optional
+            A list of optional parameters.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the required and optional parameters.
         """
         if required_params is None:
             required_params = []
@@ -72,18 +122,17 @@ class DeepChemModelConfigMapper:
 
     @staticmethod
     def get_class_name(model_class: Any) -> str:
-        """
-        This function tries to detect the model name for the model.
+        """Try to detect the model name for the model.
 
-        Parameters:
-        -----------
-        model_class: any
-            The model class
+        Parameters
+        ----------
+        model_class : Any
+            The model class.
 
-        Returns:
-        --------
-        model_class_name: str
-            The model name
+        Returns
+        -------
+        str
+            The model class name.
         """
         try:
             model_class_name = model_class.__name__
@@ -97,64 +146,17 @@ class DeepChemModelConfigMapper:
                 )
         return model_class_name
 
-    def __init__(self,
-                 model_class: Any,
-                 model_class_name: Optional[str] = None,
-                 required_init_params: Optional[List] = None,
-                 optional_init_params: Optional[List] = None,
-                 required_train_params: Optional[List] = None,
-                 optional_train_params: Optional[List] = None,
-                 tasks: Optional[Dict] = None):
-        """
-        Parameters:
-        -----------
-        deepchem_model_class_name: str
-            The name of the model class in Deepchem
-        required_init_params: List (optional)
-            A list of required init parameters
-        optional_init_params: List (optional)
-            A list of optional init parameters
-        required_train_params: List (optional)
-            A list of required train parameters
-        optional_train_params: List (optional)
-            A list of optional train parameters
-        tasks: Dict (optional)
-            A Dictionary of tasks mapped to their respective parameter name supported by the model.
-
-        Examples:
-        ---------
-        >>> from deepchem_server.core.mappings import DeepChemModelConfigMapper
-        >>> from deepchem.models import GCNModel
-        >>> model = DeepChemModelConfigMapper(
-        ... model_class=GCNModel,
-        ... required_init_params=["init_param"],
-        ... optional_init_params=["init_param1", "init_param2"],
-        ... required_train_params=["train_param"],
-        ... optional_train_params=["train_param1", "train_param2"])
-        >>> model.get_model_class_name()
-        'gcn'
-        >>> model.get_model_class()
-        <class 'deepchem.models.torch_models.gcn.GCNModel'>
-        >>> model
-        <class 'deepchem.models.torch_models.gcn.GCNModel'>
-        >>> model.add_init_params(["test_required_init_param"])
-        >>> model.get_init_params("required")
-        ['init_param', 'test_required_init_param']
-        >>> model.add_init_params(["test_optional_init_param"], "optional")
-        >>> model.get_init_params("optional")
-        ['init_param1', 'init_param2', 'test_optional_init_param']
-        >>> model.get_init_params()
-        {'required': ['init_param', 'test_required_init_param'],
-        'optional': ['init_param1', 'init_param2', 'test_optional_init_param']}
-        >>> model.add_tasks({"task1": "task", "task2": "mode"})
-        >>> model.get_tasks()
-        {'task1': 'task', 'task2': 'mode'}
-
-        In the above example, the model tasks are mapped to their respective parameter name supported by the model.
-        For example, the task "task1" is mapped to parameter "task" and the task so, during model initialization,
-        if "task1" is provided as a task, then the parameter "task" will be used to initialize the model. Similarly,
-        if "task2" is provided as a task, then the parameter "mode" will be used to initialize the model.
-        """
+    def __init__(
+        self,
+        model_class: Any,
+        model_class_name: Optional[str] = None,
+        required_init_params: Optional[List] = None,
+        optional_init_params: Optional[List] = None,
+        required_train_params: Optional[List] = None,
+        optional_train_params: Optional[List] = None,
+        tasks: Optional[Dict] = None,
+    ) -> None:
+        """Initialize DeepChemModelConfigMapper."""
         if model_class_name is None:
             model_class_name = self.get_class_name(model_class)
 
@@ -178,15 +180,18 @@ class DeepChemModelConfigMapper:
             self,
             init_params: List,
             kind: Literal["required", "optional"] = "required") -> None:
-        """
-        This function adds the init parameters to the model config mapping.
+        """Add the init parameters to the model config mapping.
 
-        Parameters:
-        -----------
-        init_params: List
-            A list of init parameters
-        kind: Literal["required", "optional"]
-            Whether the init parameters are required or optional
+        Parameters
+        ----------
+        init_params : list
+            A list of init parameters.
+        kind : {'required', 'optional'}, optional
+            Whether the init parameters are required or optional, by default 'required'.
+
+        Returns
+        -------
+        None
         """
         self.model_config_mapping['init_params'][kind].extend(init_params)
 
@@ -194,91 +199,89 @@ class DeepChemModelConfigMapper:
             self,
             train_params: List,
             kind: Literal["required", "optional"] = "required") -> None:
-        """
-        This function adds the train parameters to the model config mapping.
+        """Add the train parameters to the model config mapping.
 
-        Parameters:
-        -----------
-        train_params: List
-            A list of train parameters
-        kind: Literal["required", "optional"]
-            Whether the train parameters are required or optional
+        Parameters
+        ----------
+        train_params : list
+            A list of train parameters.
+        kind : {'required', 'optional'}, optional
+            Whether the train parameters are required or optional, by default 'required'.
+
+        Returns
+        -------
+        None
         """
         self.model_config_mapping['train_params'][kind].extend(train_params)
 
     def add_tasks(self, tasks: Dict) -> None:
-        """
-        This function adds the tasks to the model config mapping.
+        """Add the tasks to the model config mapping.
 
-        Parameters:
-        -----------
-        tasks: Dict
-            A dictionary of tasks mapped to their respective parameter name supported by the model
+        Parameters
+        ----------
+        tasks : dict
+            A dictionary of tasks mapped to their respective parameter name supported by the model.
+
+        Returns
+        -------
+        None
         """
         self.model_config_mapping['tasks'].update(tasks)
 
-    def get_model_class(self) -> str:
-        """
-        Returns the model name (key) for the model in ``deepchem_server.core.model_mappings.model_address_map``.
+    def get_model_class(self) -> Any:
+        """Return the model class for the model.
 
-        Returns:
-        --------
-        model_class: str
-            The model name for the model.
+        Returns
+        -------
+        Any
+            The model class for the model.
         """
         return self.model_config_mapping['model_class']
 
     def get_model_class_name(self) -> str:
-        """
-        Returns the model class name for the model.
+        """Return the model class name for the model.
 
-        Returns:
-        --------
-        model_class_name: str
+        Returns
+        -------
+        str
             The model class name for the model.
         """
         return self.model_config_mapping['model_class_name']
 
-    def get_init_params(self,
-                        kind: Literal["required", "optional",
-                                      None] = None) -> dict:
-        """
-        Returns the initialization parameters for the model.
+    def get_init_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+        """Return the initialization parameters for the model.
 
-        Parameters:
-        -----------
-        kind: Literal["required", "optional", None]
+        Parameters
+        ----------
+        kind : {'required', 'optional', None}, optional
             If kind is None, then the function returns all the init parameters
             for the model. If kind is "required", then the function returns
             only the required init parameters. If kind is "optional", then the
             function returns only the optional init parameters.
 
-        Returns:
-        --------
-        init_params: dict
+        Returns
+        -------
+        dict
             Returns a dictionary containing the init parameters for the model.
         """
         if kind is not None:
             return self.model_config_mapping['init_params'][kind]
         return self.model_config_mapping['init_params']
 
-    def get_train_params(self,
-                         kind: Literal["required", "optional",
-                                       None] = None) -> dict:
-        """
-        Returns the train parameters for the model.
+    def get_train_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+        """Return the train parameters for the model.
 
-        Parameters:
-        -----------
-        kind: Literal["required", "optional", None]
+        Parameters
+        ----------
+        kind : {'required', 'optional', None}, optional
             If kind is None, then the function returns all the train parameters
             for the model. If kind is "required", then the function returns
             only the required train parameters. If kind is "optional", then the
             function returns only the optional train parameters.
 
-        Returns:
-        --------
-        train_params: dict
+        Returns
+        -------
+        dict
             Returns a dictionary containing the train parameters for the model.
         """
         if kind is not None:
@@ -286,37 +289,39 @@ class DeepChemModelConfigMapper:
         return self.model_config_mapping['train_params']
 
     def get_tasks(self) -> Dict:
-        """
-        Returns the tasks for the model.
+        """Return the tasks for the model.
 
-        Returns:
-        --------
-        tasks: Dict
+        Returns
+        -------
+        dict
             Returns a Dictionary containing the tasks mapped to their respective parameter name of the model.
         """
         return self.model_config_mapping['tasks']
 
-    def __getitem__(self, item) -> Any:
-        """
-        Returns the mentioned item from the model config mapping.
+    def __getitem__(self, item: str) -> Any:
+        """Return the mentioned item from the model config mapping.
 
-        Parameters:
-        -----------
-        item: str
+        Parameters
+        ----------
+        item : str
             The item to be returned from the model config mapping.
 
-        Returns:
-        --------
-        item: any
+        Returns
+        -------
+        Any
             The item from the model config mapping.
         """
         return self.model_config_mapping[item]
 
-    def __str__(self):
-        """
-        Returns the model class name for the model.
+    def __str__(self) -> str:
+        """Return the model class name for the model.
 
-        Example:
+        Returns
+        -------
+        str
+            The model class name.
+
+        Examples
         --------
         >>> from deepchem.core.mappings import DeepChemModelConfigMapper
         >>> from deepchem.models import GCNModel
@@ -332,10 +337,14 @@ class DeepChemModelConfigMapper:
         return self.model_config_mapping['model_class_name']
 
     def __repr__(self) -> Any:
-        """
-        Returns the model class for the model.
+        """Return the model class for the model.
 
-        Example:
+        Returns
+        -------
+        Any
+            The model class.
+
+        Examples
         --------
         >>> from deepchem_server.core.model_config_mapper import DeepChemModelConfigMapper
         >>> from deepchem.models import GCNModel
@@ -352,13 +361,14 @@ class DeepChemModelConfigMapper:
 
 
 class ModelAddressWrapper(dict):
-    """
+    """Wrapper for deepchem-server model name and deepchem model config.
+
     This class is used to wrap the deepchem-server model name and deepchem model config.
     It is used as a custom dictionary to map the deepchem-server model name to the
     deepchem model config.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> from deepchem_server.core.model_config_mapper import ModelAddressWrapper, DeepChemModelConfigMapper
     >>> from deepchem.models import GCNModel
     >>> model = DeepChemModelConfigMapper(
@@ -389,7 +399,22 @@ class ModelAddressWrapper(dict):
     <class 'deepchem.models.sklearn_models.SklearnModel'>
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize ModelAddressWrapper.
+
+        Parameters
+        ----------
+        *args
+            Variable length argument list. Expected dict as first argument.
+        **kwargs
+            Arbitrary keyword arguments for model mappings.
+
+        Raises
+        ------
+        TypeError
+            If more than 1 positional argument is provided or if the first
+            argument is not a dict.
+        """
         super().__init__()
         if args:
             if len(args) > 1:
@@ -412,20 +437,19 @@ class ModelAddressWrapper(dict):
         key: str,
         kind: Literal["model_name", "class_name"] = "model_name"
     ) -> Optional[DeepChemModelConfigMapper]:
-        """
-        Returns the model config map given the model key.
+        """Return the model config map given the model key.
 
-        Parameters:
-        -----------
-        key: str
+        Parameters
+        ----------
+        key : str
             The name/key of the model.
-        kind: Literal["model_name", "model_class"]
-            Whether the key is the model name or the model class.
+        kind : {'model_name', 'class_name'}, optional
+            Whether the key is the model name or the model class, by default 'model_name'.
 
-        Returns:
-        --------
-        model_config_map: DeepChemModelConfigMapper (optional)
-            The model config map for the model.
+        Returns
+        -------
+        DeepChemModelConfigMapper or None
+            The model config map for the model, or None if not found.
         """
         if kind == "model_name":
             return self.__dict__[key]
@@ -437,20 +461,20 @@ class ModelAddressWrapper(dict):
 
     def get_model_name_from_class_name(self,
                                        model_class_name: str) -> Optional[str]:
-        """
-        Returns the model name for the model class name.
+        """Return the model name for the model class name.
+
         The class will be used when parsing the config.yaml file,
         since we don't have the model name in the config.yaml file.
 
-        Parameters:
-        -----------
-        model_class_name: str
+        Parameters
+        ----------
+        model_class_name : str
             The model class name for the model.
 
-        Returns:
-        --------
-        model_name: str (optional)
-            The model name for the model.
+        Returns
+        -------
+        str or None
+            The model name for the model, or None if not found.
         """
         for model_name, model_config_map in self.__dict__.items():
             if model_config_map.get_model_class_name() == model_class_name:
@@ -458,8 +482,8 @@ class ModelAddressWrapper(dict):
         return None
 
     def get_model_class_name(self, key: str) -> str:
-        """
-        Returns the model class name for the model key.
+        """Return the model class name for the model key.
+
         Since using a key to access the ModelAddressWrapper returns the model
         class, this function reduces the code complexity.
 
@@ -473,25 +497,24 @@ class ModelAddressWrapper(dict):
         >>> model_address_map.get_model_config("gcn").get_model_class_name()
         'GCNModel'
 
-        Parameters:
-        -----------
-        key: str
+        Parameters
+        ----------
+        key : str
             The name/key of the model.
 
-        Returns:
-        --------
-        model_class_name: str
+        Returns
+        -------
+        str
             The model class name for the model.
         """
         return self.__dict__[key].get_model_class_name()
 
     def get_model_class_names(self) -> List[str]:
-        """
-        Returns the model class names for the models.
+        """Return the model class names for the models.
 
-        Returns:
-        --------
-        model_class_names: List[str]
+        Returns
+        -------
+        list of str
             The model class names for the models.
         """
         return [
@@ -500,16 +523,67 @@ class ModelAddressWrapper(dict):
         ]
 
     def __setitem__(self, key: str, value: DeepChemModelConfigMapper) -> None:
+        """Set item in the wrapper.
+
+        Parameters
+        ----------
+        key : str
+            The model name key.
+        value : DeepChemModelConfigMapper
+            The model config mapper to store.
+
+        Returns
+        -------
+        None
+        """
         self.__dict__[key] = value
 
     def __getitem__(self, key: str) -> Any:
+        """Get item from the wrapper.
+
+        Parameters
+        ----------
+        key : str
+            The model name key.
+
+        Returns
+        -------
+        Any
+            The model config mapper.
+        """
         return self.__dict__[key].get_model_class()
 
-    def __contains__(self, key) -> bool:
-        return key in self.__dict__.keys()
+    def __contains__(self, key: str) -> bool:
+        """Check if key is in the wrapper.
+
+        Parameters
+        ----------
+        key : str
+            The model name key to check.
+
+        Returns
+        -------
+        bool
+            True if key exists, False otherwise.
+        """
+        return key in self.__dict__
 
     def keys(self) -> dict_keys:
+        """Return the keys of the wrapper.
+
+        Returns
+        -------
+        dict_keys
+            The keys of the wrapper.
+        """
         return self.__dict__.keys()
 
     def values(self) -> dict_values:
+        """Return the values of the wrapper.
+
+        Returns
+        -------
+        dict_values
+            The values of the wrapper.
+        """
         return self.__dict__.values()

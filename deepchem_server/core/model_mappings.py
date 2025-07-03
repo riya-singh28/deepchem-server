@@ -2,17 +2,45 @@ import logging
 import deepchem as dc
 from functools import wraps
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Callable, Any
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from deepchem_server.core.model_config_mapper import DeepChemModelConfigMapper, ModelAddressWrapper
 
 logger = logging.getLogger(__name__)
 
 
-def sklearn_model(model):
+def sklearn_model(model: Callable) -> Callable:
+    """Wrapper for sklearn models to integrate with DeepChem SklearnModel.
+
+    Parameters
+    ----------
+    model : Callable
+        A sklearn model class to be wrapped.
+
+    Returns
+    -------
+    Callable
+        A function that initializes a DeepChem SklearnModel with the given
+        sklearn model.
+    """
+
     # The wrapper here is used for distinguishing SklearnModel parameters and scikit-learn model parameters
     @wraps(model)
-    def initialize_sklearn_model(model_dir: Optional[str] = None, **kwargs):
+    def initialize_sklearn_model(model_dir: Optional[str] = None, **kwargs) -> Any:
+        """Initialize sklearn model wrapped in DeepChem SklearnModel.
+
+        Parameters
+        ----------
+        model_dir : str, optional
+            Directory path for the model.
+        **kwargs
+            Additional keyword arguments for the sklearn model.
+
+        Returns
+        -------
+        Any
+            DeepChem sklearn model instance.
+        """
         if model_dir is None:
             return dc.models.SklearnModel(model(**kwargs))
         else:
@@ -53,17 +81,20 @@ model_address_map = ModelAddressWrapper({
 LOGS = {}
 
 
-def update_logs(log_error: ImportError):
-    """
-    Function to update logs during import errors
+def update_logs(log_error: ImportError) -> None:
+    """Update logs during import errors.
 
     Parameters
     ----------
-    log_error: ImportError
-        Import error object
+    log_error : ImportError
+        Import error object to be logged.
 
-    Example
+    Returns
     -------
+    None
+
+    Examples
+    --------
     >>> from deepchem_server.core import model_mappings
     >>> model_mappings.LOGS == {}
     True
