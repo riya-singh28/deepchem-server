@@ -260,7 +260,7 @@ def featurize(
     label_column: Optional[str] = None,
     n_core: Optional[int] = None,
     single_core_threshold: Optional[int] = 250,
-) -> str:
+) -> Optional[str]:
     """Featurize the dataset at given address with specified featurizer.
 
     Writes output to datastore. If the compute node has more than 1 CPU core
