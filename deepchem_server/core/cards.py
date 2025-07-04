@@ -104,19 +104,17 @@ class DataCard(Card):
         'onnx', 'hdf5', 'log'
     ]
 
-    def __init__(
-        self,
-        address: str,
-        file_type: str,
-        data_type: str,
-        shape=None,
-        description: Optional[str] = None,
-        featurizer: Optional[str] = None,
-        intended_use: Optional[str] = None,
-        caveats: Optional[str] = None,
-        feat_kwargs: Optional[Dict] = None,
-        **kwargs
-    ) -> None:
+    def __init__(self,
+                 address: str,
+                 file_type: str,
+                 data_type: str,
+                 shape=None,
+                 description: Optional[str] = None,
+                 featurizer: Optional[str] = None,
+                 intended_use: Optional[str] = None,
+                 caveats: Optional[str] = None,
+                 feat_kwargs: Optional[Dict] = None,
+                 **kwargs) -> None:
         """Initialize a DataCard."""
         super().__init__()
         data_type = self.validate_datatype(data_type)
@@ -294,19 +292,17 @@ class ModelCard(Card):
     """
     SUPPORTED_MODEL_TYPES = list(model_mappings.model_address_map.keys())
 
-    def __init__(
-        self,
-        address: str,
-        model_type: str,
-        train_dataset_address: str,
-        description: Optional[str] = None,
-        featurizer: Optional[str] = None,
-        intended_use: Optional[str] = None,
-        caveats: Optional[str] = None,
-        init_kwargs: Optional[Dict] = {},
-        train_kwargs: Optional[Dict] = {},
-        **kwargs
-    ) -> None:
+    def __init__(self,
+                 address: str,
+                 model_type: str,
+                 train_dataset_address: str,
+                 description: Optional[str] = None,
+                 featurizer: Optional[str] = None,
+                 intended_use: Optional[str] = None,
+                 caveats: Optional[str] = None,
+                 init_kwargs: Optional[Dict] = {},
+                 train_kwargs: Optional[Dict] = {},
+                 **kwargs) -> None:
         """Initialize a ModelCard."""
         super().__init__()
         if not isinstance(address, str):

@@ -19,9 +19,8 @@ featurizer_map = {
 }
 
 
-def split_dataset(
-    dataset_path: str, file_type: str, n_partition: int, available_checkpoints: List[int]
-) -> List[str]:
+def split_dataset(dataset_path: str, file_type: str, n_partition: int,
+                  available_checkpoints: List[int]) -> List[str]:
     """Split the dataset into n partitions.
 
     Parameters

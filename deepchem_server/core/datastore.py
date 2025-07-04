@@ -36,8 +36,9 @@ DEFAULT_SAMPLE_ROWS = 100  # for disk datastore
 
 
 def _get_csv_or_dataframe_shape(
-    *, filename: Optional[str] = None, dataframe: Optional[pd.DataFrame] = None
-) -> Tuple[int, int]:
+        *,
+        filename: Optional[str] = None,
+        dataframe: Optional[pd.DataFrame] = None) -> Tuple[int, int]:
     """Get the shape of a CSV file or pandas DataFrame.
 
     Parameters
@@ -494,7 +495,9 @@ class DiskDataStore(DataStore):
         return model_address
 
     def get_card(
-        self, address: str, kind: Optional[str] = "data"
+            self,
+            address: str,
+            kind: Optional[str] = "data"
     ) -> Optional[Union[DataCard, ModelCard]]:
         """Fetch card from disk data store at address.
 
