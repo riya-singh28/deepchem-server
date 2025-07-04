@@ -26,7 +26,8 @@ def sklearn_model(model: Callable) -> Callable:
 
     # The wrapper here is used for distinguishing SklearnModel parameters and scikit-learn model parameters
     @wraps(model)
-    def initialize_sklearn_model(model_dir: Optional[str] = None, **kwargs) -> Any:
+    def initialize_sklearn_model(model_dir: Optional[str] = None,
+                                 **kwargs) -> Any:
         """Initialize sklearn model wrapped in DeepChem SklearnModel.
 
         Parameters

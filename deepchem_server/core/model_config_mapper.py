@@ -94,7 +94,8 @@ class DeepChemModelConfigMapper:
     """
 
     @staticmethod
-    def parse_params(required_params: Optional[List], optional_params: Optional[List]) -> Dict:
+    def parse_params(required_params: Optional[List],
+                     optional_params: Optional[List]) -> Dict:
         """Parse the required and optional parameters of the model.
 
         Returns a dictionary with the required and optional parameters.
@@ -248,7 +249,9 @@ class DeepChemModelConfigMapper:
         """
         return self.model_config_mapping['model_class_name']
 
-    def get_init_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+    def get_init_params(self,
+                        kind: Literal["required", "optional",
+                                      None] = None) -> Dict:
         """Return the initialization parameters for the model.
 
         Parameters
@@ -268,7 +271,9 @@ class DeepChemModelConfigMapper:
             return self.model_config_mapping['init_params'][kind]
         return self.model_config_mapping['init_params']
 
-    def get_train_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+    def get_train_params(self,
+                         kind: Literal["required", "optional",
+                                       None] = None) -> Dict:
         """Return the train parameters for the model.
 
         Parameters
@@ -552,21 +557,6 @@ class ModelAddressWrapper(dict):
             The model config mapper.
         """
         return self.__dict__[key].get_model_class()
-
-    def __contains__(self, key: str) -> bool:
-        """Check if key is in the wrapper.
-
-        Parameters
-        ----------
-        key : str
-            The model name key to check.
-
-        Returns
-        -------
-        bool
-            True if key exists, False otherwise.
-        """
-        return key in self.__dict__
 
     def keys(self) -> dict_keys:
         """Return the keys of the wrapper.

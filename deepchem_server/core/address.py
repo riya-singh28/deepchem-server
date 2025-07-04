@@ -73,7 +73,8 @@ class DeepchemAddress(object):
         datastore = config.get_datastore()
         if datastore is None:
             raise ValueError("No datastore configured")
-        return DeepchemAddress.address_prefix + os.path.join(datastore.storage_loc, end)
+        return DeepchemAddress.address_prefix + os.path.join(
+            datastore.storage_loc, end)
 
     @classmethod
     def get_key(cls, address: str) -> str:
