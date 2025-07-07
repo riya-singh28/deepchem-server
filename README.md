@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://deep-forest-sciences-deepchem-server.readthedocs-hosted.com/en/latest/)
 
-A **minimal cloud infrastructure for [DeepChem](https://github.com/deepchem/deepchem)** that provides a **FastAPI**-powered backend and a lightweight Python client for managing datasets, running molecular featurization, and building machine-learning models at scale.
+A minimal cloud infrastructure for [DeepChem](https://github.com/deepchem/deepchem)
 
 ---
 
