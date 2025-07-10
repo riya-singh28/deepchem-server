@@ -1,7 +1,7 @@
 DeepChem Server Documentation
 ==============================
 
-.. image:: ../assets/img/deepchem-server.png
+.. image:: ./assets/img/deepchem-server.png
    :align: center
    :alt: Database Schema Diagram
    :width: 800
