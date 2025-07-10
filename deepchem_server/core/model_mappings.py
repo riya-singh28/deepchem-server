@@ -134,12 +134,4 @@ except ImportError as e2:
     update_logs(e2)
     logger.error(f"torch models not imported: {e2}")
 
-model_param_map = {}
-"""Creates a parameter map for models using DeepChemModelConfigMapper.
-
-For each valid model, it retrieves initialization and training parameters
-(both required and optional) and stores them in `model_param_map`. The resulting
-`model_param_map` will be used to return these parameters as part of the API
-endpoint's response.
-"""
 model_names = model_address_map.keys()
