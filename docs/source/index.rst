@@ -1,6 +1,11 @@
 DeepChem Server Documentation
 ==============================
 
+.. image:: ./assets/img/deepchem-server.png
+   :align: center
+   :alt: Database Schema Diagram
+   :width: 800
+
 Welcome to DeepChem Server, a minimal cloud infrastructure for DeepChem that provides a FastAPI-based backend for managing datasets, running featurization tasks, and building machine learning models with DeepChem.
 
 DeepChem Server offers a streamlined way to:
