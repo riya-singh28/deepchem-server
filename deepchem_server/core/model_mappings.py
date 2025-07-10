@@ -143,22 +143,3 @@ For each valid model, it retrieves initialization and training parameters
 endpoint's response.
 """
 model_names = model_address_map.keys()
-
-for model_name in model_names:
-    if model_name == 'graphconv' or model_name == 'weave' or model_name == 'pagtn' or model_name == 'ensemble':
-        continue
-    model_class = str(DeepChemModelConfigMapper(
-        (model_address_map[model_name])))
-    model_config_map = model_address_map.get_model_config(model_class,
-                                                          kind="class_name")
-    if model_config_map is not None:
-        model_param_map[model_name] = {
-            'required_init_params':
-                model_config_map.get_init_params('required'),
-            'optional_init_params':
-                model_config_map.get_init_params('optional'),
-            'required_train_params':
-                model_config_map.get_train_params('required'),
-            'optional_train_params':
-                model_config_map.get_train_params('optional')
-        }
