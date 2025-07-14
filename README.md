@@ -44,9 +44,24 @@ DeepChem Server currently supports **Python 3.7 – 3.10** and the requirements 
 $ git clone https://github.com/deepforestsci/deepchem-server.git
 $ cd deepchem-server
 
-# 2. Build & start
-$ bash docker.sh
+# 2. Build & start (basic usage)
+$ ./docker.sh
+
+# Or specify a dockerfile (e.g., for GPU support)
+$ ./docker.sh -f Dockerfile.gpu
+
+# Show all options
+$ ./docker.sh -h
 ```
+
+**Available options:**
+- `-f, --dockerfile DOCKERFILE`: Specify dockerfile to use (default: `Dockerfile`)
+- `-d, --data-dir DIRECTORY`: Specify data directory (default: `./local_datastore`)  
+- `-h, --help`: Show help message
+
+**Available Dockerfiles:**
+- `Dockerfile`: Standard CPU-based setup
+- `Dockerfile-GPU`: GPU-accelerated setup with NVIDIA PyTorch base
 
 The API will be live at **<http://localhost:8000>** with interactive docs at **<http://localhost:8000/docs>**.
 

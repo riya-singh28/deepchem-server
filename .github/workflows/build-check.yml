@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-build:
+  check-build-cpu:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +30,24 @@ jobs:
 
       - name: Run build and run script
         run: ./docker.sh
+
+  check-build-gpu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Make docker script executable
+        run: chmod +x ./docker.sh
+
+      - name: Run build and run script
+        run: ./docker.sh -f Dockerfile.gpu
