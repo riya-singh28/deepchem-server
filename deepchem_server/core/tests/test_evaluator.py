@@ -45,9 +45,10 @@ def test_model_evaluator_nested_full_address(disk_datastore):
         dataset, 'test eval/test_dataset', card)
     assert dataset_address == 'deepchem://test/user/test eval/test_dataset'
 
-    model_address = train(model_type='linear_regression',
-                          dataset_address=dataset_address,
-                          model_name='deepchem://test/user/test eval/test_model')
+    model_address = train(
+        model_type='linear_regression',
+        dataset_address=dataset_address,
+        model_name='deepchem://test/user/test eval/test_model')
     assert model_address == 'deepchem://test/user/test eval/test_model'
 
     output_address = evaluator.model_evaluator(
