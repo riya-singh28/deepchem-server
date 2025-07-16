@@ -172,3 +172,55 @@ async def train(
                             detail=f"Training failed: {str(e)}")
 
     return {"trained_model_address": str(result)}
+
+
+@router.post("/evaluate")
+async def evaluate(
+    profile_name: str,
+    project_name: str,
+    dataset_addresses: List[str],
+    model_address: str,
+    metrics: List[str],
+    output_key: str,
+    is_metric_plots: bool = False,
+) -> Union[Dict, JSONResponse]:
+    """
+    Submits an evaluation job
+
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    dataset_addresses: List[str]
+        List of dataset addresses to evaluate the model on
+    model_address: str
+        datastore address of the trained model
+    metrics: List[str]
+        List of metrics to evaluate the model with
+    output_key: str
+        Name of the evaluation output
+    is_metric_plots: bool
+        Whether plot based metric is used or not
+    """
+
+    program: Dict = {
+        "program_name": "evaluate",
+        "dataset_addresses": dataset_addresses,
+        "model_address": model_address,
+        "metrics": metrics,
+        "output_key": output_key,
+        "is_metric_plots": is_metric_plots,
+    }
+
+    result = run_job(profile_name=profile_name,
+                     project_name=project_name,
+                     program=program)
+
+    if isinstance(result, Exception):
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Evaluation failed: {str(result)}"})
+
+    return {"evaluation_result_address": str(result)}
