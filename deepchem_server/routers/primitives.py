@@ -1,9 +1,11 @@
 import json
-from typing import Optional, Dict
+from typing import Dict, Optional
+
 from fastapi import APIRouter, HTTPException
-from deepchem_server.utils import run_job
-from deepchem_server.core.feat import featurizer_map
+
 from deepchem_server.core import model_mappings
+from deepchem_server.core.feat import featurizer_map
+from deepchem_server.utils import parse_boolean_none_values_from_kwargs, run_job
 
 router = APIRouter(
     prefix="/primitive",
@@ -153,23 +155,8 @@ async def train(
     if isinstance(train_kwargs, str):
         train_kwargs = json.loads(train_kwargs)
 
-    for key, value in init_kwargs.items():
-        if isinstance(value, str):
-            if value.lower() == "true":
-                init_kwargs[key] = True
-            elif value.lower() == "false":
-                init_kwargs[key] = False
-            elif value.lower() == "none":
-                init_kwargs[key] = None
-
-    for key, value in train_kwargs.items():
-        if isinstance(value, str):
-            if value.lower() == "true":
-                train_kwargs[key] = True
-            elif value.lower() == "false":
-                train_kwargs[key] = False
-            elif value.lower() == "none":
-                train_kwargs[key] = None
+    init_kwargs = parse_boolean_none_values_from_kwargs(init_kwargs)
+    train_kwargs = parse_boolean_none_values_from_kwargs(train_kwargs)
 
     program: Dict = {
         "program_name": "train",

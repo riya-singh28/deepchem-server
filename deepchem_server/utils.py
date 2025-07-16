@@ -107,3 +107,30 @@ def _upload_data(profile_name,
         filename=temppath,
         card=data_card)
     return dataset_address
+
+
+def parse_boolean_none_values_from_kwargs(
+        kwargs: Dict[str, str]) -> Dict[str, bool]:
+    """
+    Parse boolean values from kwargs and convert 'None' to None.
+
+    Parameters
+    ----------
+    kwargs : Dict[str, str]
+        Dictionary of string values to be parsed.
+
+    Returns
+    -------
+    Dict[str, bool]
+        Dictionary with boolean values and None where applicable.
+    """
+    parsed_kwargs = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            if value.lower() == "true":
+                parsed_kwargs[key] = True
+            elif value.lower() == "false":
+                parsed_kwargs[key] = False
+            elif value.lower() == "none":
+                parsed_kwargs[key] = None
+    return parsed_kwargs
