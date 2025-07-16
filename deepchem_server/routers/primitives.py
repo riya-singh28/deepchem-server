@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
 from fastapi import APIRouter, HTTPException
 
 from deepchem_server.core import model_mappings
