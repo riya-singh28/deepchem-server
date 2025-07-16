@@ -234,7 +234,7 @@ async def infer(
     dataset_column: Optional[str] = None,
     shard_size: Optional[int] = 8192,
     threshold: Optional[Union[int, float]] = None,
-) -> Union[Dict, JSONResponse]:
+) -> dict:
     """
     Submits an inference job
 
@@ -257,6 +257,11 @@ async def infer(
     threshold: Optional[Union[int, float]]
         Threshold for binarizing predictions (for classification tasks)
 
+    Raises
+    ------
+    HTTPException
+        If the model address or data address is invalid, or if the inference fails.
+
     Returns
     -------
     Dict or JSONResponse
@@ -271,17 +276,17 @@ async def infer(
             if threshold.lower() == "none":
                 threshold = None
             else:
-                return JSONResponse(
-                    status_code=400, content={"message": f"Invalid threshold value: {threshold}"}
-                )
+                raise HTTPException(
+                    status_code=400,
+                    detail={f"Invalid threshold value: {threshold}"})
 
     if isinstance(shard_size, str):
         try:
             shard_size = int(shard_size)
         except ValueError:
-            return JSONResponse(
-                status_code=400, content={"message": f"Invalid shard_size value: {shard_size}"}
-            )
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid shard_size value: {shard_size}")
 
     # Handle None values
     if dataset_column == "None":
@@ -298,11 +303,12 @@ async def infer(
         "threshold": threshold,
     }
 
-    result = run_job(profile_name=profile_name, project_name=project_name, program=program)
-
-    if isinstance(result, Exception):
-        return JSONResponse(
-            status_code=500, content={"message": f"Inference failed: {str(result)}"}
-        )
+    try:
+        result = run_job(profile_name=profile_name,
+                         project_name=project_name,
+                         program=program)
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Inference failed: {str(e)}")
 
     return {"inference_results_address": str(result)}
