@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict
+from typing import Dict, Union
 
 from deepchem_server.core import config
 from deepchem_server.core.compute import ComputeWorkflow
@@ -110,7 +110,7 @@ def _upload_data(profile_name,
 
 
 def parse_boolean_none_values_from_kwargs(
-        kwargs: Dict[str, str]) -> Dict[str, bool]:
+        kwargs: Dict[str, str]) -> Dict[str, Union[bool, None]]:
     """
     Parse boolean values from kwargs and convert 'None' to None.
 

@@ -15,14 +15,14 @@ router = APIRouter(
 
 @router.post("/featurize")
 async def featurize(
-        profile_name: str,
-        project_name: str,
-        dataset_address: str,
-        featurizer: str,
-        output: str,
-        dataset_column: str,
-        feat_kwargs: Dict = dict(),
-        label_column: Optional[str] = None,
+    profile_name: str,
+    project_name: str,
+    dataset_address: str,
+    featurizer: str,
+    output: str,
+    dataset_column: str,
+    feat_kwargs: Optional[Dict] = None,
+    label_column: Optional[str] = None,
 ) -> dict:
     """
     Submits a featurization job
@@ -56,6 +56,8 @@ async def featurize(
     dict
         A dictionary containing the address of the featurized dataset.
     """
+    if not feat_kwargs:
+        feat_kwargs = {'feat_kwargs': {}}
 
     if featurizer not in featurizer_map.keys():
         raise HTTPException(
@@ -104,8 +106,8 @@ async def train(
     dataset_address: str,
     model_type: str,
     model_name: str,
-    init_kwargs: Dict = None,
-    train_kwargs: Dict = None,
+    init_kwargs: Optional[Dict] = None,
+    train_kwargs: Optional[Dict] = None,
 ) -> dict:
     """
     Submits a training job
