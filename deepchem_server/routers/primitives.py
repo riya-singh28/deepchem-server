@@ -1,9 +1,10 @@
 import json
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from deepchem_server.utils import run_job
 from deepchem_server.core.feat import featurizer_map
+from deepchem_server.core import model_mappings
 
 router = APIRouter(
     prefix="/primitive",
@@ -13,15 +14,15 @@ router = APIRouter(
 
 @router.post("/featurize")
 async def featurize(
-        profile_name: str,
-        project_name: str,
-        dataset_address: str,
-        featurizer: str,
-        output: str,
-        dataset_column: str,
-        feat_kwargs: Dict = dict(),
-        label_column: Optional[str] = None,
-) -> Dict:
+    profile_name: str,
+    project_name: str,
+    dataset_address: str,
+    featurizer: str,
+    output: str,
+    dataset_column: str,
+    feat_kwargs: Dict = dict(),
+    label_column: Optional[str] = None,
+) -> Union[Dict, JSONResponse]:
     """
     Submits a featurization job
 
@@ -71,8 +72,93 @@ async def featurize(
         'label_column': label_column,
     }
 
-    output = run_job(profile_name=profile_name,
+    try:
+        result = run_job(profile_name=profile_name,
+                         project_name=project_name,
+                         program=program)
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Featurization failed: {str(e)}"})
+
+    return {"featurized_file_address": str(result)}
+
+
+@router.post("/train")
+async def train(
+        profile_name: str,
+        project_name: str,
+        dataset_address: str,
+        model_type: str,
+        model_name: str,
+        init_kwargs: Dict = dict(),
+        train_kwargs: Dict = dict(),
+) -> Union[Dict, JSONResponse]:
+    """
+    Submits a training job
+
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    dataset_address: str
+        datastore address of dataset to train on
+    model_type: str
+        type of model to train
+    model_name: str
+        name of the trained model
+    init_kwargs: Optional[Dict]
+        Keyword arguments to pass to model on initialization
+    train_kwargs: Optional[Dict]
+        Keyword arguments to pass to model on training
+    """
+
+    if model_type not in model_mappings.model_address_map.keys():
+        return JSONResponse(status_code=404,
+                            content={"message": "model_type invalid"})
+
+    if isinstance(init_kwargs, str):
+        init_kwargs = json.loads(init_kwargs)
+
+    if isinstance(train_kwargs, str):
+        train_kwargs = json.loads(train_kwargs)
+
+    for key, value in init_kwargs.items():
+        if isinstance(value, str):
+            if value.lower() == "true":
+                init_kwargs[key] = True
+            elif value.lower() == "false":
+                init_kwargs[key] = False
+            elif value.lower() == "none":
+                init_kwargs[key] = None
+
+    for key, value in train_kwargs.items():
+        if isinstance(value, str):
+            if value.lower() == "true":
+                train_kwargs[key] = True
+            elif value.lower() == "false":
+                train_kwargs[key] = False
+            elif value.lower() == "none":
+                train_kwargs[key] = None
+
+    program: Dict = {
+        "program_name": "train",
+        "dataset_address": dataset_address,
+        "model_type": model_type,
+        "model_name": model_name,
+        "init_kwargs": init_kwargs,
+        "train_kwargs": train_kwargs,
+    }
+
+    result = run_job(profile_name=profile_name,
                      project_name=project_name,
                      program=program)
 
-    return {"featurized_file_address": output}
+    if isinstance(result, Exception):
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Training failed: {str(result)}"})
+
+    return {"trained_model_address": str(result)}

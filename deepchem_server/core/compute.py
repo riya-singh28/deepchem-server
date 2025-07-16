@@ -1,7 +1,7 @@
 import deepchem_server.core as core
 from typing import Any, Dict
 
-program_map = {'featurize': core.featurize}
+program_map = {'featurize': core.featurize, 'train': core.train}
 
 
 class ComputeWorkflow:
