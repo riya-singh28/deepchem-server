@@ -60,11 +60,8 @@ async def featurize(
         feat_kwargs = {'feat_kwargs': {}}
 
     if featurizer not in featurizer_map.keys():
-        raise HTTPException(
-            status_code=404,
-            detail=
-            f"Invalid featurizer: {featurizer}. Use one of {list(featurizer_map.keys())}."
-        )
+        message = f"Invalid featurizer: {featurizer}. Use one of {list(featurizer_map.keys())}."
+        raise HTTPException(status_code=404, detail=message)
 
     if isinstance(feat_kwargs['feat_kwargs'], str):
         feat_kwargs['feat_kwargs'] = json.loads(feat_kwargs['feat_kwargs'])
@@ -145,11 +142,8 @@ async def train(
         train_kwargs = {}
 
     if model_type not in model_mappings.model_address_map.keys():
-        raise HTTPException(
-            status_code=404,
-            detail=
-            f"Invalid model type: {model_type}. Use one of {list(model_mappings.model_address_map.keys())}."
-        )
+        message = f"Invalid model type: {model_type}. Use one of {list(model_mappings.model_address_map.keys())}."
+        raise HTTPException(status_code=404, detail=message)
 
     if isinstance(init_kwargs, str):
         init_kwargs = json.loads(init_kwargs)
