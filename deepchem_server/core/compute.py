@@ -4,7 +4,8 @@ from typing import Any, Dict
 program_map = {
     "featurize": core.featurize,
     "train": core.train,
-    "evaluate": core.model_evaluator
+    "evaluate": core.model_evaluator,
+    "infer": core.infer
 }
 
 
