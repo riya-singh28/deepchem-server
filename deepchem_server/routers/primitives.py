@@ -1,6 +1,5 @@
 import json
-from typing import Dict, Optional
-
+from typing import Optional, Dict, List
 from fastapi import APIRouter, HTTPException
 
 from deepchem_server.core import model_mappings
@@ -183,7 +182,7 @@ async def evaluate(
     metrics: List[str],
     output_key: str,
     is_metric_plots: bool = False,
-) -> Union[Dict, JSONResponse]:
+) -> dict:
     """
     Submits an evaluation job
 
@@ -214,13 +213,12 @@ async def evaluate(
         "is_metric_plots": is_metric_plots,
     }
 
-    result = run_job(profile_name=profile_name,
-                     project_name=project_name,
-                     program=program)
-
-    if isinstance(result, Exception):
-        return JSONResponse(
-            status_code=500,
-            content={"message": f"Evaluation failed: {str(result)}"})
+    try:
+        result = run_job(profile_name=profile_name,
+                         project_name=project_name,
+                         program=program)
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Evaluation failed: {str(e)}")
 
     return {"evaluation_result_address": str(result)}
