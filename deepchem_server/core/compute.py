@@ -62,5 +62,5 @@ class ComputeWorkflow:
         if program_name not in program_map:
             raise ValueError(f"{program_name} not in available programs")
 
-        output: Any = program_map[program_name](**params)
+        output: Any = program_map[program_name](**params)  # type: ignore
         return output
