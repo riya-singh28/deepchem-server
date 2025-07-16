@@ -1,8 +1,12 @@
+import logging
 import os
-from deepchem_server.core import config
-from deepchem_server.core.datastore import DataStore, DiskDataStore
-from deepchem_server.core.compute import ComputeWorkflow
 from typing import Dict
+
+from deepchem_server.core import config
+from deepchem_server.core.compute import ComputeWorkflow
+from deepchem_server.core.datastore import DataStore, DiskDataStore
+
+logger = logging.getLogger(__name__)
 
 DATA_DIR = os.getenv("DATADIR", "/data")
 
@@ -50,7 +54,7 @@ def run_job(profile_name: str,
         Backend to be used to run the job (Default: local)
     """
     if backend == 'local':
-        print("beginning")
+        logger.info("beginning")
         datastore: DataStore = _init_datastore(profile_name=profile_name,
                                                project_name=project_name,
                                                backend=backend)
@@ -59,8 +63,8 @@ def run_job(profile_name: str,
         try:
             output = workflow.execute()
         except Exception as e:
-            print(e)
-            output = e
+            logger.error(f"Error executing workflow: {e}")
+            raise e
         return output
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
