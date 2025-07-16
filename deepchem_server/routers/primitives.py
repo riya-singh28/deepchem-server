@@ -1,7 +1,6 @@
 import json
-from typing import Optional, Dict, Union
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from typing import Optional, Dict
+from fastapi import APIRouter, HTTPException
 from deepchem_server.utils import run_job
 from deepchem_server.core.feat import featurizer_map
 from deepchem_server.core import model_mappings
@@ -14,15 +13,15 @@ router = APIRouter(
 
 @router.post("/featurize")
 async def featurize(
-    profile_name: str,
-    project_name: str,
-    dataset_address: str,
-    featurizer: str,
-    output: str,
-    dataset_column: str,
-    feat_kwargs: Dict = dict(),
-    label_column: Optional[str] = None,
-) -> Union[Dict, JSONResponse]:
+        profile_name: str,
+        project_name: str,
+        dataset_address: str,
+        featurizer: str,
+        output: str,
+        dataset_column: str,
+        feat_kwargs: Dict = dict(),
+        label_column: Optional[str] = None,
+) -> dict:
     """
     Submits a featurization job
 
@@ -44,11 +43,24 @@ async def featurize(
         Keyword arguments to pass to featurizer on initialization
     label_column: Optional[str]
         The target column in case this dataset is going to be used for training purposes
+
+    Raises
+    ------
+    HTTPException
+        If the featurizer is invalid or if the featurization fails.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the address of the featurized dataset.
     """
 
     if featurizer not in featurizer_map.keys():
-        return JSONResponse(status_code=404,
-                            content={"message": "featurizer invalid"})
+        raise HTTPException(
+            status_code=404,
+            detail=
+            f"Invalid featurizer: {featurizer}. Use one of {list(featurizer_map.keys())}."
+        )
 
     if isinstance(feat_kwargs['feat_kwargs'], str):
         feat_kwargs['feat_kwargs'] = json.loads(feat_kwargs['feat_kwargs'])
@@ -77,23 +89,22 @@ async def featurize(
                          project_name=project_name,
                          program=program)
     except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"message": f"Featurization failed: {str(e)}"})
+        raise HTTPException(status_code=500,
+                            detail=f"Featurization failed: {str(e)}")
 
     return {"featurized_file_address": str(result)}
 
 
 @router.post("/train")
 async def train(
-        profile_name: str,
-        project_name: str,
-        dataset_address: str,
-        model_type: str,
-        model_name: str,
-        init_kwargs: Dict = dict(),
-        train_kwargs: Dict = dict(),
-) -> Union[Dict, JSONResponse]:
+    profile_name: str,
+    project_name: str,
+    dataset_address: str,
+    model_type: str,
+    model_name: str,
+    init_kwargs: Dict = None,
+    train_kwargs: Dict = None,
+) -> dict:
     """
     Submits a training job
 
@@ -113,11 +124,28 @@ async def train(
         Keyword arguments to pass to model on initialization
     train_kwargs: Optional[Dict]
         Keyword arguments to pass to model on training
+
+    Raises
+    ------
+    HTTPException
+        If the model type is invalid or if the training fails.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the address of the trained model.
     """
+    if not init_kwargs:
+        init_kwargs = {}
+    if not train_kwargs:
+        train_kwargs = {}
 
     if model_type not in model_mappings.model_address_map.keys():
-        return JSONResponse(status_code=404,
-                            content={"message": "model_type invalid"})
+        raise HTTPException(
+            status_code=404,
+            detail=
+            f"Invalid model type: {model_type}. Use one of {list(model_mappings.model_address_map.keys())}."
+        )
 
     if isinstance(init_kwargs, str):
         init_kwargs = json.loads(init_kwargs)
@@ -157,7 +185,7 @@ async def train(
                          project_name=project_name,
                          program=program)
     except Exception as e:
-        return JSONResponse(status_code=500,
-                            content={"message": f"Training failed: {str(e)}"})
+        raise HTTPException(status_code=500,
+                            detail=f"Training failed: {str(e)}")
 
     return {"trained_model_address": str(result)}
