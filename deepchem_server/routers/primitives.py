@@ -157,8 +157,7 @@ async def train(
                          project_name=project_name,
                          program=program)
     except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"message": f"Training failed: {str(e)}"})
+        return JSONResponse(status_code=500,
+                            content={"message": f"Training failed: {str(e)}"})
 
     return {"trained_model_address": str(result)}
