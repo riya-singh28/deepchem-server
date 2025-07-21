@@ -1,8 +1,12 @@
+import logging
 import os
+from typing import Dict, Optional
+
 from deepchem_server.core import config
-from deepchem_server.core.datastore import DataStore, DiskDataStore
 from deepchem_server.core.compute import ComputeWorkflow
-from typing import Dict
+from deepchem_server.core.datastore import DataStore, DiskDataStore
+
+logger = logging.getLogger(__name__)
 
 DATA_DIR = os.getenv("DATADIR", "/data")
 
@@ -50,7 +54,7 @@ def run_job(profile_name: str,
         Backend to be used to run the job (Default: local)
     """
     if backend == 'local':
-        print("beginning")
+        logger.info("beginning")
         datastore: DataStore = _init_datastore(profile_name=profile_name,
                                                project_name=project_name,
                                                backend=backend)
@@ -59,8 +63,8 @@ def run_job(profile_name: str,
         try:
             output = workflow.execute()
         except Exception as e:
-            print(e)
-            output = e
+            logger.error(f"Error executing workflow: {e}")
+            raise e
         return output
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
@@ -103,3 +107,30 @@ def _upload_data(profile_name,
         filename=temppath,
         card=data_card)
     return dataset_address
+
+
+def parse_boolean_none_values_from_kwargs(
+        kwargs: Dict[str, str]) -> Dict[str, Optional[bool]]:
+    """
+    Parse boolean values from kwargs and convert 'None' to None.
+
+    Parameters
+    ----------
+    kwargs : Dict[str, str]
+        Dictionary of string values to be parsed.
+
+    Returns
+    -------
+    Dict[str, bool]
+        Dictionary with boolean values and None where applicable.
+    """
+    parsed_kwargs: Dict[str, Optional[bool]] = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            if value.lower() == "true":
+                parsed_kwargs[key] = True
+            elif value.lower() == "false":
+                parsed_kwargs[key] = False
+            elif value.lower() == "none":
+                parsed_kwargs[key] = None
+    return parsed_kwargs

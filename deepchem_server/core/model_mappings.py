@@ -3,6 +3,7 @@ import deepchem as dc
 from functools import wraps
 from datetime import datetime
 from typing import Optional, Callable, Any
+from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from deepchem_server.core.model_config_mapper import DeepChemModelConfigMapper, ModelAddressWrapper
 
@@ -51,6 +52,15 @@ def sklearn_model(model: Callable) -> Callable:
 
 
 model_address_map = ModelAddressWrapper({
+    'linear_regression':
+        DeepChemModelConfigMapper(model_class=sklearn_model(LinearRegression),
+                                  required_init_params=None,
+                                  optional_init_params=[
+                                      "fit_intercept", "copy_X", "n_jobs",
+                                      "positive"
+                                  ],
+                                  required_train_params=None,
+                                  optional_train_params=None),
     'random_forest_classifier':
         DeepChemModelConfigMapper(
             model_class=sklearn_model(RandomForestClassifier),

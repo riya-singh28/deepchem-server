@@ -558,6 +558,21 @@ class ModelAddressWrapper(dict):
         """
         return self.__dict__[key].get_model_class()
 
+    def __contains__(self, key) -> bool:
+        """Check if the key is in the wrapper.
+
+        Parameters
+        ----------
+        key : str
+            The model name key.
+
+        Returns
+        -------
+        bool
+            True if the key is in the wrapper, False otherwise.
+        """
+        return key in self.__dict__.keys()
+
     def keys(self) -> dict_keys:
         """Return the keys of the wrapper.
 
