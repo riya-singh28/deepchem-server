@@ -89,9 +89,6 @@ def model_evaluator(dataset_addresses: List[str],
         dataset_addresses = ast.literal_eval(dataset_addresses)
     if isinstance(metrics, str):
         metrics = ast.literal_eval(metrics)
-    # Results of model evaluation will be written on a json file at `output_key` in datastore.
-    # Frontend should take care of extracting evaluation metric and displaying value to user.
-
     if isinstance(is_metric_plots, str):
         is_metric_plots = ast.literal_eval(is_metric_plots)
     plot_metrics = {"prc_auc_curve": prc_auc_curve}
