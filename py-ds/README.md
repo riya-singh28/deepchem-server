@@ -86,7 +86,54 @@ featurized_address = response['featurized_file_address']
 print(f"Featurized dataset: {featurized_address}")
 ```
 
-### 5. Health Check
+### 5. Train a Model
+
+```python
+# Submit a training job
+response = primitives_client.train(
+    dataset_address=featurized_address,
+    model_type="random_forest_regressor",
+    model_name="my_trained_model",
+    init_kwargs={"n_estimators": 100},
+    train_kwargs={"nb_epoch": 10}
+)
+
+model_address = response['trained_model_address']
+print(f"Trained model: {model_address}")
+```
+
+### 6. Evaluate a Model
+
+```python
+# Submit an evaluation job
+response = primitives_client.evaluate(
+    dataset_addresses=[featurized_address],
+    model_address=model_address,
+    metrics=["roc_auc_score", "accuracy_score"],
+    output_key="evaluation_results"
+)
+
+eval_address = response['evaluation_result_address']
+print(f"Evaluation results: {eval_address}")
+```
+
+### 7. Run Inference
+
+```python
+# Submit an inference job
+response = primitives_client.infer(
+    model_address=model_address,
+    data_address=dataset_address,
+    output="inference_results",
+    dataset_column="smiles",
+    threshold=0.5  # For classification tasks
+)
+
+inference_address = response['inference_results_address']
+print(f"Inference results: {inference_address}")
+```
+
+### 8. Health Check
 
 ```python
 # Check server health
@@ -146,6 +193,9 @@ The `Settings` class manages configuration persistence:
 The `Primitives` (inherits from `BaseClient`) provides methods for computation primitives:
 
 - `featurize(dataset_address, featurizer, output, dataset_column, feat_kwargs=None, label_column=None)`: Submit featurization job
+- `train(dataset_address, model_type, model_name, init_kwargs=None, train_kwargs=None)`: Submit model training job
+- `evaluate(dataset_addresses, model_address, metrics, output_key, is_metric_plots=False)`: Submit model evaluation job
+- `infer(model_address, data_address, output, dataset_column=None, shard_size=8192, threshold=None)`: Submit inference job
 - All methods from `BaseClient` (healthcheck, configuration management, etc.)
 
 ### Data Class
@@ -155,14 +205,22 @@ The `Data` (inherits from `BaseClient`) provides methods for data management ope
 - `upload_data(file_path, filename=None, description=None, backend='local')`: Upload data file
 - All methods from `BaseClient` (healthcheck, configuration management, etc.)
 
-**Note**: All data operations (upload, download, delete) should be performed using `Data`, while computation tasks (featurize, train, evaluate) should use `Primitives`.
+**Note**: All data operations (upload, download, delete) should be performed using `Data`, while computation tasks (featurize, train, evaluate, infer) should use `Primitives`.
 
 ## Available Endpoints
 
 The package interfaces with the following DeepChem server endpoints:
 
+### Primitive Endpoints
 - `POST /primitive/featurize`: Submit featurization jobs
-- `POST /data/uploaddata`: Upload data to datastore  
+- `POST /primitive/train`: Submit model training jobs
+- `POST /primitive/evaluate`: Submit model evaluation jobs
+- `POST /primitive/infer`: Submit inference jobs
+
+### Data Endpoints
+- `POST /data/uploaddata`: Upload data to datastore
+
+### System Endpoints
 - `GET /healthcheck`: Check server health
 
 ## Configuration File
