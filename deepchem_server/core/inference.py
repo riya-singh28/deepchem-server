@@ -241,32 +241,3 @@ def infer(model_address: str,
     card = DataCard(address='', data_type='pandas.DataFrame', file_type='csv')
     return datastore.upload_data(DeepchemAddress.get_key(output),
                                  temp_output_path, card)
-
-
-def query(model_address: str, queries: List[Any]):
-    """Runs a query for the specified model against specified input.
-
-  TODO: How do we handle regression vs. classification vs generation?
-
-  Parameters
-  ----------
-  model_address: str
-    deepchem_server address of model to run inference for
-  queries: List[Any]
-    List of queries to run inference on. The queries should be in the same format as the training data.
-  """
-    datastore = config.get_datastore()
-    if datastore is None:
-        raise ValueError('No datastore found')
-    model = datastore.get(model_address)
-    model_card_address = model_address + ".cmc"
-    model_card = datastore.get(model_card_address)
-    train_dataset_address = model_card.train_dataset_address
-    train_dataset_card = datastore.get(train_dataset_address + ".cdc")
-    featurizer = train_dataset_card.featurizer
-    feat_kwargs = train_dataset_card.feat_kwargs
-    feat = featurizer_map[featurizer](**feat_kwargs)
-    X = feat.featurize(queries)
-
-    dataset = dc.data.NumpyDataset(X=X)
-    return model.predict(dataset)
