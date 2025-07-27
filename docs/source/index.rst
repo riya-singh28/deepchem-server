@@ -12,6 +12,8 @@ DeepChem Server offers a streamlined way to:
 
 * Upload and manage datasets in various formats
 * Perform molecular featurization using DeepChem's extensive featurizer library
+* Train machine learning models and run inference on molecular data
+* Evaluate model performance with comprehensive metrics
 * Store and retrieve models and data through a unified datastore API
 * Access functionality through both REST API endpoints and a Python client library
 
@@ -20,6 +22,7 @@ DeepChem Server offers a streamlined way to:
    :caption: Contents:
 
    get_started/index
+   primitives
    api_reference/index
    py_ds_library/index
 
@@ -29,9 +32,9 @@ Quick Start
 To get started with DeepChem Server:
 
 1. **Installation**: Clone the repository and run the server using Docker
-2. **Upload Data**: Use the API or Python client to upload your datasets
-3. **Featurize**: Transform your molecular data using DeepChem featurizers
-4. **Build Models**: Train and deploy machine learning models
+2. **Upload Data**: Use the API or Python client to upload your datasets  
+3. **Use Core Primitives**: Transform data, train models, and run inference using the four main primitives
+4. **Deploy Models**: Access functionality through REST API endpoints
 
 Server Setup
 ~~~~~~~~~~~~
@@ -60,6 +63,7 @@ Architecture Overview
 
 DeepChem Server consists of several key components:
 
+* **Core Primitives**: Main functions for featurization, training, inference, and evaluation
 * **API Layer**: FastAPI routers handling HTTP requests
 * **Core Modules**: Business logic for data handling, featurization, and model management
 * **Datastore**: Abstract storage layer with concrete disk implementation
