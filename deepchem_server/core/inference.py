@@ -3,7 +3,7 @@ import csv
 import os
 import pathlib
 import tempfile
-from typing import Any, Callable, Iterator, List, Optional, Sequence, Union
+from typing import Callable, Iterator, Optional, Sequence, Union
 
 import deepchem as dc
 import numpy as np
@@ -12,18 +12,8 @@ import pandas as pd
 from deepchem_server.core import config
 from deepchem_server.core.address import DeepchemAddress
 from deepchem_server.core.cards import DataCard
+from deepchem_server.core.feat import featurizer_map
 from deepchem_server.core.progress_logger import log_progress
-
-featurizer_map = {
-    "ecfp": dc.feat.CircularFingerprint,
-    "graphconv": dc.feat.ConvMolFeaturizer,
-    "weave": dc.feat.WeaveFeaturizer,
-    "molgraphconv": dc.feat.MolGraphConvFeaturizer,
-    "dummy": dc.feat.DummyFeaturizer,
-    "grover": dc.feat.GroverFeaturizer,
-    "rdkitconformer": dc.feat.RDKitConformerFeaturizer,
-    "dmpnn": dc.feat.DMPNNFeaturizer,
-}
 
 
 def _infer_with_featurize(
