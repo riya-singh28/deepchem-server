@@ -16,6 +16,10 @@ featurizer_map = {
     "graphconv": dc.feat.ConvMolFeaturizer,
     "weave": dc.feat.WeaveFeaturizer,
     "molgraphconv": dc.feat.MolGraphConvFeaturizer,
+    "dummy": dc.feat.DummyFeaturizer,
+    "grover": dc.feat.GroverFeaturizer,
+    "rdkitconformer": dc.feat.RDKitConformerFeaturizer,
+    "dmpnn": dc.feat.DMPNNFeaturizer,
 }
 
 

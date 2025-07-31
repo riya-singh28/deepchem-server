@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
 from fastapi import APIRouter, HTTPException
 
 from deepchem_server.core import model_mappings
@@ -222,3 +222,93 @@ async def evaluate(
                             detail=f"Evaluation failed: {str(e)}")
 
     return {"evaluation_result_address": str(result)}
+
+
+@router.post("/infer")
+async def infer(
+    profile_name: str,
+    project_name: str,
+    model_address: str,
+    data_address: str,
+    output: str,
+    dataset_column: Optional[str] = None,
+    shard_size: Optional[int] = 8192,
+    threshold: Optional[Union[int, float]] = None,
+) -> dict:
+    """
+    Submits an inference job
+
+    Parameters
+    ----------
+    profile_name: str
+        Name of the Profile where the job is run
+    project_name: str
+        Name of the Project where the job is run
+    model_address: str
+        datastore address of the trained model
+    data_address: str
+        datastore address of the dataset to run inference on
+    output: str
+        Name of the output inference results
+    dataset_column: Optional[str]
+        Column in the dataset to perform inference on (required for raw CSV data)
+    shard_size: Optional[int]
+        Shard size for the inference operation (default: 8192)
+    threshold: Optional[Union[int, float]]
+        Threshold for binarizing predictions (for classification tasks)
+
+    Raises
+    ------
+    HTTPException
+        If the model address or data address is invalid, or if the inference fails.
+
+    Returns
+    -------
+    Dict or JSONResponse
+        Success: {"inference_results_address": str}
+        Error: JSONResponse with error message
+    """
+    # Convert string parameters for JSON parsing
+    if isinstance(threshold, str):
+        try:
+            threshold = float(threshold)
+        except ValueError:
+            if threshold.lower() == "none":
+                threshold = None
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail={f"Invalid threshold value: {threshold}"})
+
+    if isinstance(shard_size, str):
+        try:
+            shard_size = int(shard_size)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid shard_size value: {shard_size}")
+
+    # Handle None values
+    if dataset_column == "None":
+        dataset_column = None
+
+    # Build the program for inference
+    program = {
+        "program_name": "infer",
+        "model_address": model_address,
+        "data_address": data_address,
+        "output": output,
+        "dataset_column": dataset_column,
+        "shard_size": shard_size,
+        "threshold": threshold,
+    }
+
+    try:
+        result = run_job(profile_name=profile_name,
+                         project_name=project_name,
+                         program=program)
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Inference failed: {str(e)}")
+
+    return {"inference_results_address": str(result)}
