@@ -15,7 +15,9 @@ class BaseClient:
     and other common operations that are used by specific client implementations.
     """
 
-    def __init__(self, settings: Optional[Settings] = None, base_url: Optional[str] = None):
+    def __init__(self,
+                 settings: Optional[Settings] = None,
+                 base_url: Optional[str] = None):
         """
         Initialize BaseClient.
 
@@ -48,7 +50,8 @@ class BaseClient:
                 f"Please configure using settings.set_profile() and settings.set_project()"
             )
 
-    def _make_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
+    def _make_request(self, method: str, endpoint: str,
+                      **kwargs) -> Dict[str, Any]:
         """
         Make HTTP request to the API.
 
@@ -70,11 +73,13 @@ class BaseClient:
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            raise requests.exceptions.RequestException(f"API request failed: {e}")
+            raise requests.exceptions.RequestException(
+                f"API request failed: {e}")
 
     def _get_profile_and_project(
-        self, profile_name: Optional[str] = None, project_name: Optional[str] = None
-    ) -> tuple[str, str]:
+            self,
+            profile_name: Optional[str] = None,
+            project_name: Optional[str] = None) -> tuple[str, str]:
         """
         Get profile and project names, either from parameters or settings.
 
