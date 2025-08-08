@@ -1,118 +1,217 @@
+"""
+Integration tests for upload and featurize functionality.
+
+These tests require a running DeepChem server and are intended for integration testing.
+They have been refactored to use pytest and the pyds client library.
+"""
+
 import os
-import requests
-from http import HTTPStatus
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-BACKEND_URL = "http://0.0.0.0:8000/"
-_SESSION = None
+import pytest
+import responses
 
-
-def uploadfile(profile_name,
-               project_name,
-               datastore_filename,
-               filename,
-               description=''):
-    m = MultipartEncoder(
-        fields={
-            'filename': datastore_filename,
-            'profile_name': profile_name,
-            'project_name': project_name,
-            'file': (filename, open(filename, 'rb'), 'text/plain'),
-            'description': description
-        })
-    response = _SESSION.post(BACKEND_URL + "data/uploaddata",
-                             data=m,
-                             headers={'Content-Type': m.content_type})
-    if response.status_code == HTTPStatus.OK.value:
-        response = response.json()
-        return response['dataset_address']
-    elif response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR.value:
-        print("Internal server error")
-        return None
-    elif response.status_code >= 400:
-        detail = response.json()
-        print(detail['detail'])
-        return None
-    return None
+from pyds import Data, Primitives, Settings
 
 
-def featurize(
-    profile_name,
-    project_name,
-    dataset_address,
-    featurizer,
-    output,
-    dataset_column,
-    label_column,
-    feat_kwargs={},
-):
-    params = {
-        'profile_name': profile_name,
-        'project_name': project_name,
-        'dataset_address': dataset_address,
-        'featurizer': featurizer,
-        'output': output,
-        'dataset_column': dataset_column,
-        'label_column': label_column,
-    }
+class TestIntegrationUploadFeaturize:
+    """Integration tests for upload and featurize workflow."""
 
-    json_params = {'feat_kwargs': feat_kwargs}
-    api_path = "primitive/featurize"
-    api_endpoint = BACKEND_URL + api_path
-    response = _SESSION.post(api_endpoint, params=params, json=json_params)
-    if response.status_code == HTTPStatus.OK.value:
-        response = response.json()
-        return response['featurized_file_address']
-    return None
+    @pytest.fixture
+    def integration_settings(self, temp_settings_file):
+        """Create settings for integration testing."""
+        return Settings(
+            settings_file=temp_settings_file,
+            profile="test-profile",
+            project="test-project",
+            base_url="http://0.0.0.0:8000",
+        )
 
+    @pytest.fixture
+    def data_client(self, integration_settings):
+        """Create Data client for integration testing."""
+        return Data(settings=integration_settings)
 
-def test_upload_csv():
-    global _SESSION
-    _SESSION = requests.Session()
+    @pytest.fixture
+    def primitives_client(self, integration_settings):
+        """Create Primitives client for integration testing."""
+        return Primitives(settings=integration_settings)
 
-    profile_name = 'test-profile'
-    project_name = 'test-project'
+    @pytest.fixture
+    def zinc10_csv_file(self, test_assets_dir):
+        """Path to the zinc10.csv test file."""
+        return test_assets_dir / "zinc10.csv"
 
-    base_path = os.path.dirname(os.path.abspath(__file__))
+    @pytest.mark.integration
+    def test_upload_csv_integration(self, data_client, zinc10_csv_file):
+        """
+        Integration test for CSV file upload.
 
-    dataset_address = uploadfile(profile_name=profile_name,
-                                 project_name=project_name,
-                                 datastore_filename='zinc10_sample.csv',
-                                 filename=os.path.join(base_path,
-                                                       'assets/zinc10.csv'),
-                                 description='Sample test csv file')
+        Note: This test requires a running DeepChem server.
+        Mark with @pytest.mark.integration to run separately.
+        """
+        if not zinc10_csv_file.exists():
+            pytest.skip("zinc10.csv test file not found")
 
-    if dataset_address is None:
-        raise Exception("CSV file upload failed")
+        result = data_client.upload_data(
+            file_path=zinc10_csv_file,
+            filename="zinc10_sample.csv",
+            description="Sample test csv file",
+        )
 
-    assert dataset_address == f"deepchem://{profile_name}/{project_name}/zinc10_sample.csv"
+        expected_address = "deepchem://test-profile/test-project/zinc10_sample.csv"
+        assert result.get("dataset_address") == expected_address
 
+    @pytest.mark.integration
+    def test_featurize_integration(self, data_client, primitives_client,
+                                   zinc10_csv_file):
+        """
+        Integration test for featurization workflow.
 
-def test_featurize():
-    global _SESSION
-    _SESSION = requests.Session()
+        Note: This test requires a running DeepChem server.
+        Mark with @pytest.mark.integration to run separately.
+        """
+        if not zinc10_csv_file.exists():
+            pytest.skip("zinc10.csv test file not found")
 
-    profile_name = 'test-profile'
-    project_name = 'test-project'
+        # First upload the file
+        upload_result = data_client.upload_data(
+            file_path=zinc10_csv_file,
+            filename="zinc10_sample.csv",
+            description="Sample test csv file",
+        )
 
-    base_path = os.path.dirname(os.path.abspath(__file__))
+        dataset_address = upload_result["dataset_address"]
 
-    dataset_address = uploadfile(profile_name=profile_name,
-                                 project_name=project_name,
-                                 datastore_filename='zinc10_sample.csv',
-                                 filename=os.path.join(base_path,
-                                                       'assets/zinc10.csv'),
-                                 description='Sample test csv file')
+        # Then featurize it
+        featurize_result = primitives_client.featurize(
+            dataset_address=dataset_address,
+            featurizer="ecfp",
+            output="test_featurized",
+            dataset_column="smiles",
+            label_column="logp",
+            feat_kwargs={"size": 1024},
+        )
 
-    featurized_file_address = featurize(
-        profile_name,
-        project_name,
-        dataset_address,
-        featurizer='ecfp',
-        output='test_featurized',
-        dataset_column='smiles',
-        label_column='logp',
-        feat_kwargs={'size': 1024},
-    )
+        expected_address = "deepchem://test-profile/test-project/test_featurized"
+        assert featurize_result.get(
+            "featurized_file_address") == expected_address
 
-    assert featurized_file_address == f'deepchem://{profile_name}/{project_name}/test_featurized'
+    @responses.activate
+    def test_upload_csv_mocked(self, data_client, zinc10_csv_file):
+        """
+        Mocked test for CSV file upload functionality.
+
+        This test doesn't require a running server and uses mocked responses.
+        """
+        # Mock the upload response
+        responses.add(
+            responses.POST,
+            "http://0.0.0.0:8000/data/uploaddata",
+            json={
+                "status":
+                    "success",
+                "dataset_address":
+                    "deepchem://test-profile/test-project/zinc10_sample.csv",
+            },
+            status=200,
+        )
+
+        # Create a temporary CSV file for testing if zinc10.csv doesn't exist
+        if not zinc10_csv_file.exists():
+            import tempfile
+
+            content = "smiles,logp\nCCO,0.2\nCCC,1.0\n"
+            with tempfile.NamedTemporaryFile(mode="w",
+                                             suffix=".csv",
+                                             delete=False) as f:
+                f.write(content)
+                test_file = f.name
+        else:
+            test_file = str(zinc10_csv_file)
+
+        try:
+            result = data_client.upload_data(
+                file_path=test_file,
+                filename="zinc10_sample.csv",
+                description="Sample test csv file",
+            )
+
+            assert result["status"] == "success"
+            assert (result["dataset_address"] ==
+                    "deepchem://test-profile/test-project/zinc10_sample.csv")
+        finally:
+            # Cleanup temporary file if created
+            if not zinc10_csv_file.exists() and os.path.exists(test_file):
+                os.unlink(test_file)
+
+    @responses.activate
+    def test_featurize_mocked(self, primitives_client):
+        """
+        Mocked test for featurization functionality.
+
+        This test doesn't require a running server and uses mocked responses.
+        """
+        # Mock the featurize response
+        responses.add(
+            responses.POST,
+            "http://0.0.0.0:8000/primitive/featurize",
+            json={
+                "status":
+                    "success",
+                "featurized_file_address":
+                    "deepchem://test-profile/test-project/test_featurized",
+            },
+            status=200,
+        )
+
+        result = primitives_client.featurize(
+            dataset_address=
+            "deepchem://test-profile/test-project/zinc10_sample.csv",
+            featurizer="ecfp",
+            output="test_featurized",
+            dataset_column="smiles",
+            label_column="logp",
+            feat_kwargs={"size": 1024},
+        )
+
+        assert result["status"] == "success"
+        assert (result["featurized_file_address"] ==
+                "deepchem://test-profile/test-project/test_featurized")
+
+    @responses.activate
+    def test_upload_error_handling(self, data_client, sample_csv_file):
+        """Test error handling in upload functionality."""
+        # Mock an error response
+        responses.add(
+            responses.POST,
+            "http://0.0.0.0:8000/data/uploaddata",
+            json={"detail": "File format not supported"},
+            status=400,
+        )
+
+        with pytest.raises(Exception) as exc_info:
+            data_client.upload_data(file_path=sample_csv_file,
+                                    filename="test.csv")
+
+        assert "File format not supported" in str(exc_info.value)
+
+    @responses.activate
+    def test_featurize_error_handling(self, primitives_client):
+        """Test error handling in featurize functionality."""
+        # Mock an error response
+        responses.add(
+            responses.POST,
+            "http://0.0.0.0:8000/primitive/featurize",
+            json={"detail": "Invalid featurizer"},
+            status=400,
+        )
+
+        with pytest.raises(Exception) as exc_info:
+            primitives_client.featurize(
+                dataset_address="deepchem://test-profile/test-project/data.csv",
+                featurizer="invalid_featurizer",
+                output="test_output",
+                dataset_column="smiles",
+            )
+
+        assert "Invalid featurizer" in str(exc_info.value)

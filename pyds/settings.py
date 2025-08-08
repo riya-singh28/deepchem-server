@@ -18,10 +18,10 @@ class Settings:
 
     def __init__(self,
                  settings_file: str = "settings.json",
-                 profile: str = None,
-                 project: str = None,
+                 profile: Optional[str] = None,
+                 project: Optional[str] = None,
                  base_url: str = "http://localhost:8000",
-                 additional_settings: dict = None):
+                 additional_settings: Optional[dict] = None):
         """
         Initialize Settings instance.
 
