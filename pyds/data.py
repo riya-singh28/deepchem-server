@@ -4,9 +4,9 @@ Data client module for interacting with DeepChem server data endpoints.
 Contains the Data class for all data management operations.
 """
 
-import requests
-from typing import Optional, Dict, Any, Union
 from pathlib import Path
+from typing import Any, Dict, Optional, Union
+
 from .base import BaseClient
 from .settings import Settings
 
@@ -18,7 +18,9 @@ class Data(BaseClient):
     This class provides methods for data management operations.
     """
 
-    def __init__(self, settings: Optional[Settings] = None, base_url: Optional[str] = None):
+    def __init__(self,
+                 settings: Optional[Settings] = None,
+                 base_url: Optional[str] = None):
         """
         Initialize Data client.
 
@@ -61,7 +63,8 @@ class Data(BaseClient):
             raise ValueError(f"File not found: {file_path}")
 
         # Get profile and project names (validates configuration)
-        profile, project = self._get_profile_and_project(profile_name, project_name)
+        profile, project = self._get_profile_and_project(
+            profile_name, project_name)
 
         if filename is None:
             filename = file_path.name
@@ -80,7 +83,11 @@ class Data(BaseClient):
             data["description"] = description
 
         try:
-            return self._make_request("POST", "/data/uploaddata", files=files, data=data)
-        finally:
-            # Close the file
+            response = self._make_request("POST",
+                                          "/data/uploaddata",
+                                          files=files,
+                                          data=data)
             files["file"][1].close()
+            return response
+        except Exception as e:
+            raise ValueError(f"Failed to upload data: {str(e)}") from e

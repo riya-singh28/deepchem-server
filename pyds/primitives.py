@@ -4,8 +4,8 @@ Primitives client module for interacting with DeepChem server API endpoints.
 Contains the Primitives class for all computation tasks.
 """
 
-import json
-from typing import Optional, Dict, Any, List, Union
+from typing import Any, Dict, List, Optional, Union
+
 from .base import BaseClient
 from .settings import Settings
 
@@ -18,7 +18,9 @@ class Primitives(BaseClient):
     including featurization, training, evaluation, and inference.
     """
 
-    def __init__(self, settings: Optional[Settings] = None, base_url: Optional[str] = None):
+    def __init__(self,
+                 settings: Optional[Settings] = None,
+                 base_url: Optional[str] = None):
         """
         Initialize Primitives client.
 
@@ -60,7 +62,8 @@ class Primitives(BaseClient):
             requests.exceptions.RequestException: If API request fails
         """
         # Get profile and project names (validates configuration)
-        profile, project = self._get_profile_and_project(profile_name, project_name)
+        profile, project = self._get_profile_and_project(
+            profile_name, project_name)
 
         if feat_kwargs is None:
             feat_kwargs = {}
@@ -73,7 +76,9 @@ class Primitives(BaseClient):
             "featurizer": featurizer,
             "output": output,
             "dataset_column": dataset_column,
-            "feat_kwargs": {"feat_kwargs": feat_kwargs},
+            "feat_kwargs": {
+                "feat_kwargs": feat_kwargs
+            },
         }
 
         if label_column is not None:
@@ -111,7 +116,8 @@ class Primitives(BaseClient):
             requests.exceptions.RequestException: If API request fails
         """
         # Get profile and project names (validates configuration)
-        profile, project = self._get_profile_and_project(profile_name, project_name)
+        profile, project = self._get_profile_and_project(
+            profile_name, project_name)
 
         if init_kwargs is None:
             init_kwargs = {}
@@ -161,7 +167,8 @@ class Primitives(BaseClient):
             requests.exceptions.RequestException: If API request fails
         """
         # Get profile and project names (validates configuration)
-        profile, project = self._get_profile_and_project(profile_name, project_name)
+        profile, project = self._get_profile_and_project(
+            profile_name, project_name)
 
         # Prepare the request data
         data = {
@@ -208,7 +215,8 @@ class Primitives(BaseClient):
             requests.exceptions.RequestException: If API request fails
         """
         # Get profile and project names (validates configuration)
-        profile, project = self._get_profile_and_project(profile_name, project_name)
+        profile, project = self._get_profile_and_project(
+            profile_name, project_name)
 
         # Prepare the request data
         data = {

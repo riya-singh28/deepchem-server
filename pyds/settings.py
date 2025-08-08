@@ -4,8 +4,8 @@ Settings module for managing profile and project configurations.
 
 import json
 import os
-from typing import Optional, Dict, Any
 from pathlib import Path
+from typing import Any, Optional
 
 
 class Settings:
@@ -16,20 +16,36 @@ class Settings:
     and project information, and persists them to a settings.json file.
     """
 
-    def __init__(self, settings_file: str = "settings.json"):
+    def __init__(self,
+                 settings_file: str = "settings.json",
+                 profile: str = None,
+                 project: str = None,
+                 base_url: str = "http://localhost:8000",
+                 additional_settings: dict = None):
         """
         Initialize Settings instance.
 
         Args:
             settings_file: Path to the settings JSON file (default: "settings.json")
+            profile: Initial profile name (optional)
+            project: Initial project name (optional)
+            base_url: Base URL for the DeepChem server (default: "http://localhost:8000")
+            additional_settings: Additional settings to initialize (optional)
         """
         self.settings_file = Path(settings_file)
-        self.profile: Optional[str] = None
-        self.project: Optional[str] = None
-        self.base_url: str = "http://localhost:8000"
-        self._additional_settings: Dict[str, Any] = {}
+
+        if not os.path.exists(settings_file):
+            self.touch()
 
         self.load()
+
+        self.profile = profile
+        self.project = project
+        self.base_url = base_url
+        self._additional_settings = additional_settings or {}
+
+        if profile or project or base_url or self._additional_settings:
+            self.save()
 
     def set_profile(self, profile_name: str) -> None:
         """
@@ -112,6 +128,23 @@ class Settings:
         """
         return self._additional_settings.get(key, default)
 
+    def touch(self) -> None:
+        """
+        Update the settings file's last modified timestamp.
+        This is useful to ensure the settings file is considered fresh.
+        """
+        try:
+            empty_settings = {
+                "profile": None,
+                "project": None,
+                "base_url": None,
+                "additional_settings": {},
+            }
+            with open(self.settings_file, "w") as f:
+                json.dump(empty_settings, f, indent=2)
+        except Exception as e:
+            print(f"Warning: Could not update settings file timestamp: {e}")
+
     def save(self) -> None:
         """
         Save current settings to the JSON file.
@@ -127,7 +160,9 @@ class Settings:
             with open(self.settings_file, "w") as f:
                 json.dump(settings_data, f, indent=2)
         except Exception as e:
-            print(f"Warning: Could not save settings to {self.settings_file}: {e}")
+            print(
+                f"Warning: Could not save settings to {self.settings_file}: {e}"
+            )
 
     def load(self) -> None:
         """
@@ -142,11 +177,15 @@ class Settings:
 
             self.profile = settings_data.get("profile")
             self.project = settings_data.get("project")
-            self.base_url = settings_data.get("base_url", "http://localhost:8000")
-            self._additional_settings = settings_data.get("additional_settings", {})
+            self.base_url = settings_data.get("base_url",
+                                              "http://localhost:8000")
+            self._additional_settings = settings_data.get(
+                "additional_settings", {})
 
         except Exception as e:
-            print(f"Warning: Could not load settings from {self.settings_file}: {e}")
+            print(
+                f"Warning: Could not load settings from {self.settings_file}: {e}"
+            )
 
     def reset(self) -> None:
         """
@@ -161,7 +200,9 @@ class Settings:
             try:
                 os.remove(self.settings_file)
             except Exception as e:
-                print(f"Warning: Could not remove settings file {self.settings_file}: {e}")
+                print(
+                    f"Warning: Could not remove settings file {self.settings_file}: {e}"
+                )
 
     def is_configured(self) -> bool:
         """
