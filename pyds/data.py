@@ -7,6 +7,8 @@ Contains the Data class for all data management operations.
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
+from requests_toolbelt import MultipartEncoder
+
 from .base import BaseClient
 from .settings import Settings
 
@@ -60,7 +62,7 @@ class Data(BaseClient):
         file_path = Path(file_path)
 
         if not file_path.exists():
-            raise ValueError(f"File not found: {file_path}")
+            raise FileNotFoundError(f"File not found: {file_path}")
 
         # Get profile and project names (validates configuration)
         profile, project = self._get_profile_and_project(
@@ -69,25 +71,28 @@ class Data(BaseClient):
         if filename is None:
             filename = file_path.name
 
-        # Prepare the multipart form data
-        files = {"file": (filename, open(file_path, "rb"))}
-
-        data = {
+        # Prepare the multipart form data using MultipartEncoder
+        fields: dict[str, Any] = {
             "profile_name": profile,
             "project_name": project,
             "filename": filename,
             "backend": backend,
+            "file": (filename, open(file_path, "rb")),
         }
 
         if description is not None:
-            data["description"] = description
+            fields["description"] = description
+
+        multipart_data = MultipartEncoder(fields=fields)
 
         try:
-            response = self._make_request("POST",
-                                          "/data/uploaddata",
-                                          files=files,
-                                          data=data)
-            files["file"][1].close()
-            return response
+            response = self._post(
+                "/data/uploaddata",
+                data=multipart_data,
+                headers={"Content-Type": multipart_data.content_type},
+            )
+            fields["file"][1].close()
+            return self._validate_response(response)
         except Exception as e:
+            fields["file"][1].close()
             raise ValueError(f"Failed to upload data: {str(e)}") from e

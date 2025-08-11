@@ -84,7 +84,8 @@ class Primitives(BaseClient):
         if label_column is not None:
             data["label_column"] = label_column
 
-        return self._make_request("POST", "/primitive/featurize", json=data)
+        response = self._post("/primitive/featurize", json=data)
+        return self._validate_response(response)
 
     def train(
         self,
@@ -135,7 +136,8 @@ class Primitives(BaseClient):
             "train_kwargs": train_kwargs,
         }
 
-        return self._make_request("POST", "/primitive/train", json=data)
+        response = self._post("/primitive/train", json=data)
+        return self._validate_response(response)
 
     def evaluate(
         self,
@@ -181,7 +183,8 @@ class Primitives(BaseClient):
             "is_metric_plots": is_metric_plots,
         }
 
-        return self._make_request("POST", "/primitive/evaluate", json=data)
+        response = self._post("/primitive/evaluate", json=data)
+        return self._validate_response(response)
 
     def infer(
         self,
@@ -230,4 +233,5 @@ class Primitives(BaseClient):
             "threshold": threshold,
         }
 
-        return self._make_request("POST", "/primitive/infer", json=data)
+        response = self._post("/primitive/infer", json=data)
+        return self._validate_response(response)

@@ -51,7 +51,7 @@ class BaseClient:
             )
 
     def _make_request(self, method: str, endpoint: str,
-                      **kwargs) -> Dict[str, Any]:
+                      **kwargs) -> requests.Response:
         """
         Make HTTP request to the API.
 
@@ -61,20 +61,121 @@ class BaseClient:
             **kwargs: Additional arguments for requests
 
         Returns:
-            JSON response as dictionary
+            Response object
 
         Raises:
-            requests.exceptions.RequestException: If request fails
+            Exception: If request fails
         """
         url = f"{self.base_url}{endpoint}"
 
         try:
             response = self.session.request(method, url, **kwargs)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            raise requests.exceptions.RequestException(
-                f"API request failed: {e}")
+            return response
+        except Exception as e:
+            raise Exception(f"API request failed: {e}")
+
+    def _get(self, endpoint: str, **kwargs) -> requests.Response:
+        """
+        Make GET request to the API.
+
+        Args:
+            endpoint: API endpoint (without base URL)
+            **kwargs: Additional arguments for requests
+
+        Returns:
+            Response object
+        """
+        return self._make_request("GET", endpoint, **kwargs)
+
+    def _post(self, endpoint: str, **kwargs) -> requests.Response:
+        """
+        Make POST request to the API.
+
+        Args:
+            endpoint: API endpoint (without base URL)
+            **kwargs: Additional arguments for requests
+
+        Returns:
+            Response object
+        """
+        return self._make_request("POST", endpoint, **kwargs)
+
+    def _put(self, endpoint: str, **kwargs) -> requests.Response:
+        """
+        Make PUT request to the API.
+
+        Args:
+            endpoint: API endpoint (without base URL)
+            **kwargs: Additional arguments for requests
+
+        Returns:
+            Response object
+        """
+        return self._make_request("PUT", endpoint, **kwargs)
+
+    def _delete(self, endpoint: str, **kwargs) -> requests.Response:
+        """
+        Make DELETE request to the API.
+
+        Args:
+            endpoint: API endpoint (without base URL)
+            **kwargs: Additional arguments for requests
+
+        Returns:
+            Response object
+        """
+        return self._make_request("DELETE", endpoint, **kwargs)
+
+    def _validate_response(self, response: requests.Response) -> Dict[str, Any]:
+        """
+        Validate response and return JSON data.
+
+        Args:
+            response: Response object to validate
+
+        Returns:
+            JSON response as dictionary
+
+        Raises:
+            Exception: If response indicates an error
+        """
+        if response.status_code >= 400:
+            try:
+                error_data = response.json()
+                error_message = error_data.get("detail",
+                                               f"HTTP {response.status_code}")
+            except:
+                error_message = f"HTTP {response.status_code}"
+            raise Exception(error_message)
+
+        return response.json()
+
+    def _get_profile_project(
+            self,
+            profile_name: Optional[str] = None,
+            project_name: Optional[str] = None) -> tuple[str, str]:
+        """
+        Get profile and project names, either from parameters or settings.
+
+        Args:
+            profile_name: Profile name (uses settings if not provided)
+            project_name: Project name (uses settings if not provided)
+
+        Returns:
+            Tuple of (profile, project) names
+
+        Raises:
+            ValueError: If required settings are missing
+        """
+        profile = profile_name or self.settings.get_profile()
+        project = project_name or self.settings.get_project()
+
+        if not profile or not project:
+            self._check_configuration()
+
+        # After _check_configuration(), we know both values are not None
+        assert profile is not None and project is not None
+        return profile, project
 
     def _get_profile_and_project(
             self,
@@ -111,9 +212,10 @@ class BaseClient:
             Health status response
 
         Raises:
-            requests.exceptions.RequestException: If API request fails
+            Exception: If API request fails
         """
-        return self._make_request("GET", "/healthcheck")
+        response = self._get("/healthcheck")
+        return self._validate_response(response)
 
     def get_settings(self) -> Settings:
         """

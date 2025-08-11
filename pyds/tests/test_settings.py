@@ -133,7 +133,7 @@ class TestSettings:
         # File should not exist
         assert not os.path.exists(temp_file)
 
-        settings = Settings(settings_file=temp_file)
+        _ = Settings(settings_file=temp_file)
 
         # File should now exist
         assert os.path.exists(temp_file)

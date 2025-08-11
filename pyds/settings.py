@@ -16,12 +16,14 @@ class Settings:
     and project information, and persists them to a settings.json file.
     """
 
-    def __init__(self,
-                 settings_file: str = "settings.json",
-                 profile: Optional[str] = None,
-                 project: Optional[str] = None,
-                 base_url: str = "http://localhost:8000",
-                 additional_settings: Optional[dict] = None):
+    def __init__(
+        self,
+        settings_file: str = "settings.json",
+        profile: Optional[str] = None,
+        project: Optional[str] = None,
+        base_url: Optional[str] = None,
+        additional_settings: Optional[dict] = None,
+    ):
         """
         Initialize Settings instance.
 
@@ -29,22 +31,36 @@ class Settings:
             settings_file: Path to the settings JSON file (default: "settings.json")
             profile: Initial profile name (optional)
             project: Initial project name (optional)
-            base_url: Base URL for the DeepChem server (default: "http://localhost:8000")
+            base_url: Base URL for the DeepChem server (optional)
             additional_settings: Additional settings to initialize (optional)
         """
         self.settings_file = Path(settings_file)
 
+        # Initialize defaults
+        self.profile = None
+        self.project = None
+        self.base_url = "http://localhost:8000"
+        self._additional_settings = {}
+
         if not os.path.exists(settings_file):
             self.touch()
 
+        # Load existing settings first
         self.load()
 
-        self.profile = profile
-        self.project = project
-        self.base_url = base_url
-        self._additional_settings = additional_settings or {}
+        # Override with provided parameters
+        if profile is not None:
+            self.profile = profile
+        if project is not None:
+            self.project = project
+        if base_url is not None:
+            self.base_url = base_url
+        if additional_settings:
+            self._additional_settings.update(additional_settings)
 
-        if profile or project or base_url or self._additional_settings:
+        # Save if any overrides were provided
+        if (profile is not None or project is not None or
+                base_url is not None or additional_settings):
             self.save()
 
     def set_profile(self, profile_name: str) -> None:
@@ -134,7 +150,7 @@ class Settings:
         This is useful to ensure the settings file is considered fresh.
         """
         try:
-            empty_settings = {
+            empty_settings: dict[str, Any] = {
                 "profile": None,
                 "project": None,
                 "base_url": None,

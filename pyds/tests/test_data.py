@@ -31,7 +31,7 @@ class TestData:
 
     def test_init_without_settings(self):
         """Test Data initialization without settings."""
-        with patch("pyds.data.Settings") as mock_settings:
+        with patch("pyds.base.client.Settings") as mock_settings:
             mock_instance = Mock()
             mock_instance.get_base_url.return_value = "http://default:8000"
             mock_settings.return_value = mock_instance

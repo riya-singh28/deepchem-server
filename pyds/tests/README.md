@@ -10,9 +10,19 @@ The tests are organized into separate files for each module:
 - `test_settings.py` - Tests for the Settings module
 - `test_base_client.py` - Tests for the BaseClient module  
 - `test_data.py` - Tests for the Data module
-- `test_primitives.py` - Tests for the Primitives module
+- `test_primitives.py` - Tests for the Primitives module (organized by primitive operation)
 - `test_init.py` - Tests for package initialization and imports
 - `test_upload_featurize.py` - Integration tests for upload and featurize workflow
+
+### Primitives Test Organization
+
+The `test_primitives.py` file is organized into focused test classes:
+
+- `TestPrimitivesCommonUtils` - Common utilities, initialization, and error handling tests
+- `TestFeaturize` - Tests for featurization operations
+- `TestTrain` - Tests for training operations  
+- `TestEvaluate` - Tests for evaluation operations
+- `TestInfer` - Tests for inference operations
 
 ## Running Tests
 
@@ -70,6 +80,19 @@ To run a specific test:
 pytest tests/test_settings.py::TestSettings::test_init_with_new_file
 ```
 
+To run tests for a specific primitive operation:
+
+```bash
+# Run all featurize tests
+pytest tests/test_primitives.py::TestFeaturize
+
+# Run all common utility tests
+pytest tests/test_primitives.py::TestPrimitivesCommonUtils
+
+# Run a specific primitive test
+pytest tests/test_primitives.py::TestFeaturize::test_featurize_success
+```
+
 ## Test Categories
 
 ### Unit Tests
@@ -124,6 +147,8 @@ Test configuration is managed in `pytest.ini`:
 3. **Mocking**: Mock external dependencies for unit tests
 4. **Descriptive Names**: Use clear, descriptive test names
 5. **Documentation**: Include docstrings for complex test scenarios
+6. **Organization**: Group related tests into focused test classes (as demonstrated in `test_primitives.py`)
+7. **Separation of Concerns**: Keep common utilities separate from operation-specific tests
 
 ## Troubleshooting
 
