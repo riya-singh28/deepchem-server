@@ -236,7 +236,8 @@ async def infer(
     output: Annotated[str, Body()],
     dataset_column: Annotated[Optional[str], Body()] = None,
     shard_size: Annotated[Optional[int], Body()] = 8192,
-    threshold: Annotated[Optional[Union[int, float]], Body()] = None,
+    threshold: Annotated[Optional[Union[int, float]],
+                         Body()] = None,
 ) -> dict:
     """
     Submits an inference job

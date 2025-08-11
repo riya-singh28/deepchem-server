@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict, Optional
+from typing import Dict
 
 from deepchem_server.core import config
 from deepchem_server.core.compute import ComputeWorkflow

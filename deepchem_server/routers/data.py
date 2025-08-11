@@ -1,5 +1,5 @@
 import logging
-from typing import Union, Dict
+from typing import Dict
 from fastapi import APIRouter, UploadFile, File, Form
 from deepchem_server.core.cards import DataCard
 from deepchem_server.utils import _upload_data
@@ -11,12 +11,14 @@ router = APIRouter(prefix="/data", tags=["data"])
 
 
 @router.post("/uploaddata")
-async def upload_data(file: UploadFile = File(...),
-                      profile_name: str = Form(None),
-                      project_name: str = Form(None),
-                      filename: str = Form(None),
-                      description: Union[Dict, str] = Form(None),
-                      backend='local') -> Dict:
+async def upload_data(
+        file: UploadFile = File(...),
+        profile_name: str = Form(None),
+        project_name: str = Form(None),
+        filename: str = Form(None),
+        description: str = Form(None),
+        backend="local",
+) -> Dict:
     """
     Upload data to datastore
 
@@ -44,8 +46,18 @@ async def upload_data(file: UploadFile = File(...),
     if file_type in ['csv', 'parquet']:
         data_type = 'pandas.DataFrame'
     elif file_type in [
-            'pdb', 'sdf', 'fasta', 'fastq', 'sdf', 'txt', 'xml', 'pdbqt',
-            'smi', 'smiles', 'cxsmiles', 'json'
+            "pdb",
+            "sdf",
+            "fasta",
+            "fastq",
+            "sdf",
+            "txt",
+            "xml",
+            "pdbqt",
+            "smi",
+            "smiles",
+            "cxsmiles",
+            "json",
     ]:
         data_type = 'text/plain'
     elif file_type in ['dcd', 'bz2', 'zip', 'onnx', 'hdf5']:
