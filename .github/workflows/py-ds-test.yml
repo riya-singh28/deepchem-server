@@ -1,4 +1,4 @@
-name: Run py-ds test on live server
+name: Run pyds test on live server
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-test-py-ds:
+  run-test-pyds:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --no-cache-dir -r py-ds/requirements.txt
+          pip install --no-cache-dir -r pyds/requirements.txt
 
       - name: Run tests
         run: pytest pyds/tests/ -v

@@ -12,7 +12,6 @@ The tests are organized into separate files for each module:
 - `test_data.py` - Tests for the Data module
 - `test_primitives.py` - Tests for the Primitives module (organized by primitive operation)
 - `test_init.py` - Tests for package initialization and imports
-- `test_upload_featurize.py` - Integration tests for upload and featurize workflow
 
 ### Primitives Test Organization
 
