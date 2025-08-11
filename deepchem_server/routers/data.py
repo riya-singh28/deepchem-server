@@ -77,5 +77,5 @@ async def upload_data(
                                 filename,
                                 contents,
                                 card,
-                                backend=backend)
+                                backend=backend)  # type: ignore
     return {"dataset_address": address}
