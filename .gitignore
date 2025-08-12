@@ -6,3 +6,9 @@ data/
 
 *.mypy_cache/
 *.pytest_cache/
+
+
+# pyds
+pyds/dist/
+pyds/build/
+pyds/pyds.egg-info/
