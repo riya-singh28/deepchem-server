@@ -13,16 +13,26 @@ A Python client package for interacting with the DeepChem server API. This packa
 
 ## Installation
 
-1. Install the required dependencies:
+### From Source (Development)
+
+1. Clone the repository and navigate to the pyds directory
+2. Install in editable mode:
 ```bash
-pip install -r requirements.txt
+pip install -e .
 ```
 
-2. Import the package in your Python code:
+### For Development
+Install with development dependencies:
+```bash
+pip install -e ".[dev]"
+# or
+pip install -r requirements-dev.txt
+```
+
+### Usage
+After installation, import the package in your Python code:
 ```python
-from settings import Settings
-from primitives import Primitives
-from data import Data
+from pyds import Settings, Primitives, Data, BaseClient
 ```
 
 ## Quick Start
@@ -30,7 +40,7 @@ from data import Data
 ### 1. Configure Settings
 
 ```python
-from settings import Settings
+from pyds import Settings
 
 # Initialize settings
 settings = Settings()
@@ -48,8 +58,7 @@ Settings are automatically saved to `settings.json` in the current directory.
 ### 2. Initialize API Clients
 
 ```python
-from primitives import Primitives
-from data import Data
+from pyds import Primitives, Data
 
 # Initialize clients with your settings
 primitives_client = Primitives(settings)

@@ -1,6 +1,4 @@
-requests
-requests-toolbelt
-pytest
-pytest-mock
-responses
-pytest-cov
+# Runtime dependencies only
+# For development dependencies, use: pip install -e ".[dev]"
+requests>=2.28.0
+requests-toolbelt>=0.10.0
