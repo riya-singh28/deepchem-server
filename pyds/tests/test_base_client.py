@@ -11,7 +11,6 @@ import responses
 from pyds import Settings
 from pyds.base import BaseClient
 
-
 class TestBaseClient:
     """Test cases for BaseClient class."""
 
@@ -52,8 +51,7 @@ class TestBaseClient:
 
     def test_check_configuration_missing_profile(self, temp_settings_file):
         """Test _check_configuration with missing profile."""
-        settings = Settings(settings_file=temp_settings_file,
-                            project="test-project")
+        settings = Settings(settings_file=temp_settings_file, project="test-project")
         client = BaseClient(settings=settings)
 
         with pytest.raises(ValueError) as exc_info:
@@ -63,8 +61,7 @@ class TestBaseClient:
 
     def test_check_configuration_missing_project(self, temp_settings_file):
         """Test _check_configuration with missing project."""
-        settings = Settings(settings_file=temp_settings_file,
-                            profile="test-profile")
+        settings = Settings(settings_file=temp_settings_file, profile="test-profile")
         client = BaseClient(settings=settings)
 
         with pytest.raises(ValueError) as exc_info:
@@ -86,10 +83,7 @@ class TestBaseClient:
     @responses.activate
     def test_get_request_success(self, base_client_instance):
         """Test successful GET request."""
-        responses.add(responses.GET,
-                      "http://localhost:8000/test",
-                      json={"status": "success"},
-                      status=200)
+        responses.add(responses.GET, "http://localhost:8000/test", json={"status": "success"}, status=200)
 
         response = base_client_instance._get("/test")
 
@@ -99,10 +93,7 @@ class TestBaseClient:
     @responses.activate
     def test_post_request_success(self, base_client_instance):
         """Test successful POST request."""
-        responses.add(responses.POST,
-                      "http://localhost:8000/test",
-                      json={"status": "created"},
-                      status=201)
+        responses.add(responses.POST, "http://localhost:8000/test", json={"status": "created"}, status=201)
 
         response = base_client_instance._post("/test", json={"data": "test"})
 
@@ -112,10 +103,7 @@ class TestBaseClient:
     @responses.activate
     def test_put_request_success(self, base_client_instance):
         """Test successful PUT request."""
-        responses.add(responses.PUT,
-                      "http://localhost:8000/test",
-                      json={"status": "updated"},
-                      status=200)
+        responses.add(responses.PUT, "http://localhost:8000/test", json={"status": "updated"}, status=200)
 
         response = base_client_instance._put("/test", json={"data": "updated"})
 
@@ -125,10 +113,7 @@ class TestBaseClient:
     @responses.activate
     def test_delete_request_success(self, base_client_instance):
         """Test successful DELETE request."""
-        responses.add(responses.DELETE,
-                      "http://localhost:8000/test",
-                      json={"status": "deleted"},
-                      status=200)
+        responses.add(responses.DELETE, "http://localhost:8000/test", json={"status": "deleted"}, status=200)
 
         response = base_client_instance._delete("/test")
 
@@ -138,10 +123,7 @@ class TestBaseClient:
     @responses.activate
     def test_request_with_params(self, base_client_instance):
         """Test request with query parameters."""
-        responses.add(responses.GET,
-                      "http://localhost:8000/test",
-                      json={"status": "success"},
-                      status=200)
+        responses.add(responses.GET, "http://localhost:8000/test", json={"status": "success"}, status=200)
 
         params = {"param1": "value1", "param2": "value2"}
         response = base_client_instance._get("/test", params=params)
@@ -156,10 +138,7 @@ class TestBaseClient:
     @responses.activate
     def test_request_with_headers(self, base_client_instance):
         """Test request with custom headers."""
-        responses.add(responses.GET,
-                      "http://localhost:8000/test",
-                      json={"status": "success"},
-                      status=200)
+        responses.add(responses.GET, "http://localhost:8000/test", json={"status": "success"}, status=200)
 
         headers = {"Custom-Header": "custom-value"}
         response = base_client_instance._get("/test", headers=headers)
@@ -172,10 +151,7 @@ class TestBaseClient:
     @responses.activate
     def test_request_error_handling(self, base_client_instance):
         """Test request error handling."""
-        responses.add(responses.GET,
-                      "http://localhost:8000/test",
-                      json={"detail": "Not found"},
-                      status=404)
+        responses.add(responses.GET, "http://localhost:8000/test", json={"detail": "Not found"}, status=404)
 
         response = base_client_instance._get("/test")
 
@@ -230,16 +206,15 @@ class TestBaseClient:
 
     def test_get_profile_project_with_override(self, base_client_instance):
         """Test getting profile and project with override parameters."""
-        profile, project = base_client_instance._get_profile_project(
-            profile_name="override-profile", project_name="override-project")
+        profile, project = base_client_instance._get_profile_project(profile_name="override-profile",
+                                                                     project_name="override-project")
 
         assert profile == "override-profile"
         assert project == "override-project"
 
     def test_get_profile_project_partial_override(self, base_client_instance):
         """Test getting profile and project with partial override."""
-        profile, project = base_client_instance._get_profile_project(
-            profile_name="override-profile")
+        profile, project = base_client_instance._get_profile_project(profile_name="override-profile")
 
         assert profile == "override-profile"
         assert project == "test-project"  # From settings
