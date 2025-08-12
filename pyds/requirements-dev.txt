@@ -15,6 +15,7 @@ build>=0.8.0
 twine>=4.0.0
 
 # Code quality
-black>=22.0.0
-flake8>=4.0.0
-isort>=5.10.0
+yapf
+flake8
+isort
+mypy

@@ -1,5 +1,5 @@
 """
-Data client module for interacting with DeepChem server data endpoints.
+Data client module for interacting with DeepChem Server data endpoints.
 
 Contains the Data class for all data management operations.
 """
@@ -15,7 +15,7 @@ from .settings import Settings
 
 class Data(BaseClient):
     """
-    Client for interacting with DeepChem server data endpoints.
+    Client for interacting with DeepChem Server data endpoints.
 
     This class provides methods for data management operations.
     """

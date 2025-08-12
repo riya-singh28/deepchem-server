@@ -8,6 +8,7 @@ include requirements.txt
 include requirements-dev.txt
 include pytest.ini
 include py.typed
+include .coveragerc
 
 # Include test assets if any
 recursive-include tests/assets *

@@ -53,7 +53,7 @@ settings.set_base_url("http://localhost:8000")  # Optional, defaults to localhos
 print(settings)  # Settings(profile='my_profile', project='my_project', base_url='http://localhost:8000')
 ```
 
-Settings are automatically saved to `settings.json` in the current directory.
+Settings are automatically saved to `.pyds.settings.json` in the current directory.
 
 ### 2. Initialize API Clients
 
@@ -234,7 +234,7 @@ The package interfaces with the following DeepChem server endpoints:
 
 ## Configuration File
 
-Settings are stored in `settings.json` with the following structure:
+Settings are stored in `.pyds.settings.json` with the following structure:
 
 ```json
 {

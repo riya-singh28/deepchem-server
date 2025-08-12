@@ -123,9 +123,9 @@ def test_assets_dir():
 
 @pytest.fixture(autouse=True)
 def cleanup_settings_files():
-    """Automatically cleanup any settings.json files created during tests."""
+    """Automatically cleanup any .pyds.settings.json files created during tests."""
     yield
-    # Cleanup any settings.json files in the current directory
-    for file in ["settings.json", "test_settings.json"]:
+    # Cleanup any .pyds.settings.json files in the current directory
+    for file in [".pyds.settings.json", "test_settings.json"]:
         if os.path.exists(file):
             os.unlink(file)

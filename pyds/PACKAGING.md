@@ -54,7 +54,17 @@ python -c "import pyds; print('Success!')"
 
 ### Test with Coverage
 ```bash
-pytest --cov=pyds
+# Basic coverage (uses .coveragerc settings)
+pytest --cov
+
+# Coverage with terminal report
+pytest --cov --cov-report=term-missing
+
+# Coverage with HTML report
+pytest --cov --cov-report=html
+
+# Coverage with XML report (for CI/CD)
+pytest --cov --cov-report=xml
 ```
 
 ## Publishing (Future)
@@ -67,6 +77,21 @@ When ready to publish to PyPI:
 4. Upload to test PyPI first: `twine upload --repository testpypi dist/*`
 5. Test install from test PyPI
 6. Upload to PyPI: `twine upload dist/*`
+
+## Coverage Configuration
+
+The project uses `.coveragerc` to configure code coverage settings:
+
+- **Branch Coverage**: Enabled for detailed analysis
+- **Source**: Measures coverage for the `pyds` package
+- **Minimum Coverage**: 85% threshold
+- **Excludes**: Test files, `__pycache__`, virtual environments
+- **Reports**: Terminal, HTML, and XML formats supported
+
+Coverage reports are generated in:
+- **Terminal**: Displayed during test runs
+- **HTML**: `htmlcov/` directory
+- **XML**: `coverage.xml` file (for CI/CD integration)
 
 ## Files Structure
 
@@ -83,6 +108,8 @@ pyds/
 ├── pyproject.toml      # Modern Python packaging configuration
 ├── requirements.txt    # Runtime dependencies
 ├── requirements-dev.txt # Development dependencies
+├── pytest.ini         # pytest configuration
+├── .coveragerc         # Coverage configuration
 ├── MANIFEST.in         # Additional files to include
 ├── README.md           # Documentation
 └── py.typed           # Type hints marker

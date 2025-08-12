@@ -1,5 +1,5 @@
 """
-DeepChem Data Science Client Package
+DeepChem Server Client Package
 
 A Python client for interacting with the DeepChem server API.
 Provides Primitives client for computation tasks and Data client for data operations.
@@ -7,9 +7,9 @@ Provides Primitives client for computation tasks and Data client for data operat
 
 __version__ = "0.1.0"
 
-from .settings import Settings
-from .primitives import Primitives
-from .data import Data
 from .base import BaseClient
+from .data import Data
+from .primitives import Primitives
+from .settings import Settings
 
 __all__ = ["Settings", "Primitives", "Data", "BaseClient"]

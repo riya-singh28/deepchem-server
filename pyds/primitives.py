@@ -1,5 +1,5 @@
 """
-Primitives client module for interacting with DeepChem server API endpoints.
+Primitives client module for interacting with DeepChem Server API endpoints.
 
 Contains the Primitives class for all computation tasks.
 """
@@ -12,7 +12,7 @@ from .settings import Settings
 
 class Primitives(BaseClient):
     """
-    Client for interacting with DeepChem server primitive endpoints.
+    Client for interacting with DeepChem Server primitive endpoints.
 
     This class provides methods to submit jobs to various primitive endpoints
     including featurization, training, evaluation, and inference.

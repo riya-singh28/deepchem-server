@@ -13,12 +13,12 @@ class Settings:
     Settings class for managing profile and project configurations.
 
     This class handles storing and loading user settings including profile
-    and project information, and persists them to a settings.json file.
+    and project information, and persists them to a .pyds.settings.json file.
     """
 
     def __init__(
         self,
-        settings_file: str = "settings.json",
+        settings_file: str = ".pyds.settings.json",
         profile: Optional[str] = None,
         project: Optional[str] = None,
         base_url: Optional[str] = None,
@@ -28,7 +28,7 @@ class Settings:
         Initialize Settings instance.
 
         Args:
-            settings_file: Path to the settings JSON file (default: "settings.json")
+            settings_file: Path to the settings JSON file (default: ".pyds.settings.json")
             profile: Initial profile name (optional)
             project: Initial project name (optional)
             base_url: Base URL for the DeepChem server (optional)

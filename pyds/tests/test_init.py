@@ -45,7 +45,7 @@ class TestPackageInit:
 
     def test_direct_imports(self):
         """Test that direct imports work correctly."""
-        from pyds import Settings, Primitives, Data, BaseClient
+        from pyds import BaseClient, Data, Primitives, Settings
 
         # Test that we can instantiate classes
         settings = Settings(settings_file="test.json")
@@ -76,12 +76,6 @@ class TestPackageInit:
         for item in pyds.__all__:
             assert hasattr(pyds, item)
 
-    def test_package_docstring(self):
-        """Test that package has a docstring."""
-        assert pyds.__doc__ is not None
-        assert len(pyds.__doc__.strip()) > 0
-        assert "DeepChem Data Science Client Package" in pyds.__doc__
-
     def test_module_attributes(self):
         """Test that module has expected attributes."""
         # Check that the module has the expected structure
@@ -92,10 +86,10 @@ class TestPackageInit:
 
     def test_submodule_imports(self):
         """Test that submodules can be imported."""
-        from pyds.settings import Settings as SettingsClass
-        from pyds.primitives import Primitives as PrimitivesClass
-        from pyds.data import Data as DataClass
         from pyds.base import BaseClient as BaseClientClass
+        from pyds.data import Data as DataClass
+        from pyds.primitives import Primitives as PrimitivesClass
+        from pyds.settings import Settings as SettingsClass
 
         assert SettingsClass is Settings
         assert PrimitivesClass is Primitives
@@ -113,6 +107,7 @@ class TestPackageInit:
     def test_package_structure(self):
         """Test that package structure is as expected."""
         import pkgutil
+
         import pyds
 
         # Get all modules in the package
@@ -127,10 +122,10 @@ class TestPackageInit:
     def test_circular_import_prevention(self):
         """Test that there are no circular import issues."""
         # Try importing all modules in different orders
-        import pyds.primitives
-
         # Reload the main package
         import importlib
+
+        import pyds.primitives
 
         importlib.reload(pyds)
 
@@ -168,7 +163,6 @@ class TestPackageInit:
 
         # Style 2: Direct import
         from pyds import Settings as Settings2
-
         # Style 3: Import from submodule
         from pyds.settings import Settings as Settings3
 

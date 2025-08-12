@@ -2,8 +2,10 @@
 Base client class with common functionality for all DeepChem API clients.
 """
 
+from typing import Any, Dict, Optional
+
 import requests
-from typing import Optional, Dict, Any
+
 from ..settings import Settings
 
 
