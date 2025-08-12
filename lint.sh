@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# lint.sh - Run yapf, flake8, and mypy on Python files in a specified directory
+# lint.sh - Run yapf, isort, flake8, and mypy on Python files in a specified directory
 # Usage: ./lint.sh [directory] [options]
 #
 # Options:
-#   --fix         Apply yapf formatting automatically
+#   --fix         Apply yapf formatting and isort import sorting automatically
 #   --strict      Use strict mypy checking
 #   --help        Show this help message
 
@@ -26,20 +26,20 @@ STRICT_MYPY=false
 show_help() {
     echo "Usage: $0 [directory] [options]"
     echo ""
-    echo "Run yapf, flake8, and mypy on Python files in the specified directory."
+    echo "Run yapf, isort, flake8, and mypy on Python files in the specified directory."
     echo "The script automatically uses configuration from setup.cfg if available."
     echo ""
     echo "Arguments:"
     echo "  directory     Directory to lint (default: current directory)"
     echo ""
     echo "Options:"
-    echo "  --fix         Apply yapf formatting automatically"
+    echo "  --fix         Apply yapf formatting and isort import sorting automatically"
     echo "  --strict      Use strict mypy checking (overrides setup.cfg)"
     echo "  --help        Show this help message"
     echo ""
     echo "Configuration:"
     echo "  The script looks for setup.cfg in the current directory or parent directory."
-    echo "  If found, it uses the [yapf], [flake8], and [mypy] sections for configuration."
+    echo "  If found, it uses the [yapf], [isort], [flake8], and [mypy] sections for configuration."
     echo ""
     echo "Examples:"
     echo "  $0                    # Lint current directory"
@@ -92,6 +92,7 @@ check_tool() {
 
 echo -e "${BLUE}Checking required tools...${NC}"
 check_tool yapf
+check_tool isort
 check_tool flake8
 check_tool mypy
 
@@ -112,8 +113,18 @@ if [ -n "$SETUP_CFG_PATH" ]; then
 fi
 echo ""
 
-# Find Python files
-PYTHON_FILES=$(find "$DIRECTORY" -name "*.py" -type f | grep -v __pycache__ | sort)
+# Find Python files (exclude common build/cache directories)
+PYTHON_FILES=$(find "$DIRECTORY" -name "*.py" -type f \
+    | grep -v __pycache__ \
+    | grep -v "/build/" \
+    | grep -v "/dist/" \
+    | grep -v "/.pytest_cache/" \
+    | grep -v "/htmlcov/" \
+    | grep -v "/.venv/" \
+    | grep -v "/venv/" \
+    | grep -v "/env/" \
+    | grep -v "/.git/" \
+    | sort)
 
 if [ -z "$PYTHON_FILES" ]; then
     echo -e "${YELLOW}No Python files found in '$DIRECTORY'${NC}"
@@ -143,6 +154,25 @@ else
     else
         echo -e "${GREEN}✓ All files are properly formatted${NC}"
         YAPF_FAILED=false
+    fi
+fi
+echo ""
+
+# Run isort (import sorter)
+echo -e "${BLUE}Running isort (import sorter)...${NC}"
+if [ "$FIX_FORMAT" = true ]; then
+    echo -e "${YELLOW}Auto-fixing import order...${NC}"
+    echo "$PYTHON_FILES" | xargs isort
+    echo -e "${GREEN}✓ Import sorting applied${NC}"
+    ISORT_FAILED=false
+else
+    if echo "$PYTHON_FILES" | xargs isort --check-only --diff; then
+        echo -e "${GREEN}✓ All imports are properly sorted${NC}"
+        ISORT_FAILED=false
+    else
+        echo -e "${RED}✗ Import sorting issues found${NC}"
+        echo "Run with --fix to automatically fix import order"
+        ISORT_FAILED=true
     fi
 fi
 echo ""
@@ -183,11 +213,18 @@ echo ""
 
 if [ "$FIX_FORMAT" = true ]; then
     echo -e "yapf (formatter): ${GREEN}Applied${NC}"
+    echo -e "isort (import sorter): ${GREEN}Applied${NC}"
 else
     if [ "$YAPF_FAILED" = true ]; then
         echo -e "yapf (formatter): ${RED}FAILED${NC}"
     else
         echo -e "yapf (formatter): ${GREEN}PASSED${NC}"
+    fi
+
+    if [ "$ISORT_FAILED" = true ]; then
+        echo -e "isort (import sorter): ${RED}FAILED${NC}"
+    else
+        echo -e "isort (import sorter): ${GREEN}PASSED${NC}"
     fi
 fi
 
@@ -205,7 +242,7 @@ fi
 
 # Exit with error code if any tool failed (unless we're just fixing formatting)
 if [ "$FIX_FORMAT" = false ]; then
-    if [ "$YAPF_FAILED" = true ] || [ "$FLAKE8_FAILED" = true ] || [ "$MYPY_FAILED" = true ]; then
+    if [ "$YAPF_FAILED" = true ] || [ "$ISORT_FAILED" = true ] || [ "$FLAKE8_FAILED" = true ] || [ "$MYPY_FAILED" = true ]; then
         echo ""
         echo -e "${RED}Some checks failed. Please fix the issues above.${NC}"
         exit 1
