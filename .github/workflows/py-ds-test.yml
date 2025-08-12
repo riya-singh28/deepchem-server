@@ -50,5 +50,4 @@ jobs:
 
       - name: Run tests
         run: |
-          cd pyds
-          pytest tests/ -v --cov=pyds --cov-report=term-missing
+          pytest pyds/tests/ -v --cov=pyds --cov-report=term-missing

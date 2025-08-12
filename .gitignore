@@ -7,6 +7,8 @@ data/
 *.mypy_cache/
 *.pytest_cache/
 
+# coverage reports
+*.coverage*
 
 # pyds
 pyds/dist/
