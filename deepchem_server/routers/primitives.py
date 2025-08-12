@@ -1,11 +1,13 @@
 import json
-from typing import Optional, Dict, List, Union, Annotated
+from typing import Annotated, Dict, List, Optional, Union
+
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Body
 
 from deepchem_server.core import model_mappings
 from deepchem_server.core.feat import featurizer_map
-from deepchem_server.utils import parse_boolean_none_values_from_kwargs, run_job
+from deepchem_server.utils import (parse_boolean_none_values_from_kwargs,
+                                   run_job)
 
 router = APIRouter(
     prefix="/primitive",

@@ -1,6 +1,7 @@
 import logging
+from typing import Any, Dict, List, Literal, Optional
+
 from _collections_abc import dict_keys, dict_values
-from typing import Literal, List, Any, Optional, Dict
 
 logger = logging.getLogger(__name__)
 

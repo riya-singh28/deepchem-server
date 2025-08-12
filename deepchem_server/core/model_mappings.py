@@ -1,11 +1,14 @@
 import logging
-import deepchem as dc
-from functools import wraps
 from datetime import datetime
-from typing import Optional, Callable, Any
-from sklearn.linear_model import LinearRegression
+from functools import wraps
+from typing import Any, Callable, Optional
+
+import deepchem as dc
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from deepchem_server.core.model_config_mapper import DeepChemModelConfigMapper, ModelAddressWrapper
+from sklearn.linear_model import LinearRegression
+
+from deepchem_server.core.model_config_mapper import (
+    DeepChemModelConfigMapper, ModelAddressWrapper)
 
 logger = logging.getLogger(__name__)
 
