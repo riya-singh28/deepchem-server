@@ -21,11 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.on_event("startup")
 async def on_startup():
     pass
-
 
 @app.get("/healthcheck")
 async def perform_healthcheck():

@@ -4,7 +4,6 @@ import unittest
 
 from deepchem_server.core.cards import DataCard, ModelCard
 
-
 class TestCards(unittest.TestCase):
 
     def setUp(self):

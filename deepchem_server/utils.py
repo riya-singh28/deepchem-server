@@ -10,10 +10,7 @@ logger = logging.getLogger(__name__)
 
 DATA_DIR = os.getenv("DATADIR", "./data")
 
-
-def _init_datastore(profile_name: str,
-                    project_name: str,
-                    backend='local') -> DataStore:
+def _init_datastore(profile_name: str, project_name: str, backend='local') -> DataStore:
     """
     Function to initialise the datastore in DATA_DIR
 
@@ -27,18 +24,12 @@ def _init_datastore(profile_name: str,
         Backend to be used to run the job (Default: local)
     """
     if backend == 'local':
-        datastore: DataStore = DiskDataStore(profile_name=profile_name,
-                                             project_name=project_name,
-                                             basedir=DATA_DIR)
+        datastore: DataStore = DiskDataStore(profile_name=profile_name, project_name=project_name, basedir=DATA_DIR)
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
     return datastore
 
-
-def run_job(profile_name: str,
-            project_name: str,
-            program: Dict,
-            backend: str = 'local'):
+def run_job(profile_name: str, project_name: str, program: Dict, backend: str = 'local'):
     """
     Function to run jobs based on the submitted program
 
@@ -55,9 +46,7 @@ def run_job(profile_name: str,
     """
     if backend == 'local':
         logger.info("beginning")
-        datastore: DataStore = _init_datastore(profile_name=profile_name,
-                                               project_name=project_name,
-                                               backend=backend)
+        datastore: DataStore = _init_datastore(profile_name=profile_name, project_name=project_name, backend=backend)
         config.set_datastore(datastore)  # type: ignore
         workflow = ComputeWorkflow(program)
         try:
@@ -69,13 +58,7 @@ def run_job(profile_name: str,
     else:
         raise NotImplementedError(f"{backend} backend not implemented")
 
-
-def _upload_data(profile_name,
-                 project_name,
-                 datastore_filename,
-                 contents,
-                 data_card,
-                 backend='local'):
+def _upload_data(profile_name, project_name, datastore_filename, contents, data_card, backend='local'):
     """
     A wrapper method to the server for creating DataStore object and using
     it to upload data files
@@ -94,20 +77,14 @@ def _upload_data(profile_name,
     data_card: DataCard
         data card for the file
     """
-    datastore = _init_datastore(profile_name=profile_name,
-                                project_name=project_name,
-                                backend=backend)
+    datastore = _init_datastore(profile_name=profile_name, project_name=project_name, backend=backend)
     import tempfile
     tempdir = tempfile.TemporaryDirectory()
     temppath = os.path.join(tempdir.name, datastore_filename.replace('/', '_'))
     with open(temppath, 'wb') as f:
         f.write(contents)
-    dataset_address = datastore.upload_data(
-        datastore_filename=datastore_filename,
-        filename=temppath,
-        card=data_card)
+    dataset_address = datastore.upload_data(datastore_filename=datastore_filename, filename=temppath, card=data_card)
     return dataset_address
-
 
 def parse_boolean_none_values_from_kwargs(kwargs: Dict) -> Dict:
     """

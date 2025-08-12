@@ -4,7 +4,6 @@ from deepchem_server.core.datastore import DiskDataStore
 
 _DATASTORE = None
 
-
 def set_datastore(datastore: Union[DiskDataStore, None]) -> None:
     """Set the global datastore instance.
 
@@ -20,7 +19,6 @@ def set_datastore(datastore: Union[DiskDataStore, None]) -> None:
     global _DATASTORE
     _DATASTORE = datastore
 
-
 def get_datastore() -> Union[DiskDataStore, None]:
     """Get the current global datastore instance.
 
@@ -30,7 +28,6 @@ def get_datastore() -> Union[DiskDataStore, None]:
         The current datastore instance, or None if no datastore has been set.
     """
     return _DATASTORE
-
 
 def refresh() -> None:
     """Reset the global datastore to None.
