@@ -51,4 +51,4 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest pyds/tests/ -v --cov=pyds --cov-report=term-missing
+          python -m pytest pyds/tests/ -v --cov-config=pyds/.coveragerc --cov --cov-report=term-missing
