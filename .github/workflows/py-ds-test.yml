@@ -39,12 +39,13 @@ jobs:
       - name: Install pyds library and dependencies
         run: |
           python -m pip install --upgrade pip
-          # Install pyds library in editable mode with dev dependencies
-          pip install -e "pyds/[dev]"
+          pip install -e "./pyds/[dev]"
 
       - name: Verify pyds installation
         run: |
           python --version
+          pip list | grep pyds
+          python -c "import sys; print('Python path:', sys.path)"
           python -c "import pyds; print(f'pyds version: {pyds.__version__}')"
           python -c "from pyds import Settings, Primitives, Data, BaseClient; print('All main classes imported successfully')"
 
