@@ -5,6 +5,7 @@ from deepchem_server.core import config
 
 DEEPCHEM_ADDRESS_PREFIX = 'deepchem://'
 
+
 class DeepchemAddress(object):
     """A uniform representation to refer deepchem Objects.
 
@@ -73,7 +74,8 @@ class DeepchemAddress(object):
         datastore = config.get_datastore()
         if datastore is None:
             raise ValueError("No datastore configured")
-        return DeepchemAddress.address_prefix + os.path.join(datastore.storage_loc, end)
+        return DeepchemAddress.address_prefix + os.path.join(
+            datastore.storage_loc, end)
 
     @classmethod
     def get_key(cls, address: str) -> str:
@@ -235,7 +237,8 @@ class DeepchemAddress(object):
         except ValueError:
             # Address is not in the form deepchem://profile/project/key
             if not address.startswith(storage_loc):
-                address = DEEPCHEM_ADDRESS_PREFIX + storage_loc.strip('/') + '/' + address
+                address = DEEPCHEM_ADDRESS_PREFIX + storage_loc.strip(
+                    '/') + '/' + address
             address_key = DeepchemAddress.get_key(address)
             if format == 's3':
                 return storage_loc + address_key

@@ -11,6 +11,7 @@ logger.setLevel(logging.INFO)
 
 router = APIRouter(prefix="/data", tags=["data"])
 
+
 @router.post("/uploaddata")
 async def upload_data(
         file: UploadFile = File(...),
@@ -68,7 +69,15 @@ async def upload_data(
     else:
         data_type = ''
 
-    card: DataCard = DataCard(address='', file_type=file_type, data_type=data_type, description=description)
+    card: DataCard = DataCard(address='',
+                              file_type=file_type,
+                              data_type=data_type,
+                              description=description)
 
-    address: str = _upload_data(profile_name, project_name, filename, contents, card, backend=backend)  # type: ignore
+    address: str = _upload_data(profile_name,
+                                project_name,
+                                filename,
+                                contents,
+                                card,
+                                backend=backend)  # type: ignore
     return {"dataset_address": address}

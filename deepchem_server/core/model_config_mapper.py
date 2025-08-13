@@ -5,6 +5,7 @@ from _collections_abc import dict_keys, dict_values
 
 logger = logging.getLogger(__name__)
 
+
 class DeepChemModelConfigMapper:
     """Mappings between models and their configuration in Deepchem.
 
@@ -94,7 +95,8 @@ class DeepChemModelConfigMapper:
     """
 
     @staticmethod
-    def parse_params(required_params: Optional[List], optional_params: Optional[List]) -> Dict:
+    def parse_params(required_params: Optional[List],
+                     optional_params: Optional[List]) -> Dict:
         """Parse the required and optional parameters of the model.
 
         Returns a dictionary with the required and optional parameters.
@@ -141,7 +143,9 @@ class DeepChemModelConfigMapper:
                 model_class_name = model_class.model.__class__.__name__
             else:
                 model_class_name = str(model_class.__class__)
-                logger.error(f"{model_class.__class__}: Model class name not provided and could not be inferred.")
+                logger.error(
+                    f"{model_class.__class__}: Model class name not provided and could not be inferred."
+                )
         return model_class_name
 
     def __init__(
@@ -162,14 +166,22 @@ class DeepChemModelConfigMapper:
             tasks = {}
 
         self.model_config_mapping = {
-            "model_class": model_class,
-            "model_class_name": model_class_name,
-            "init_params": self.parse_params(required_init_params, optional_init_params),
-            "train_params": self.parse_params(required_train_params, optional_train_params),
-            "tasks": tasks,
+            "model_class":
+                model_class,
+            "model_class_name":
+                model_class_name,
+            "init_params":
+                self.parse_params(required_init_params, optional_init_params),
+            "train_params":
+                self.parse_params(required_train_params, optional_train_params),
+            "tasks":
+                tasks,
         }
 
-    def add_init_params(self, init_params: List, kind: Literal["required", "optional"] = "required") -> None:
+    def add_init_params(
+            self,
+            init_params: List,
+            kind: Literal["required", "optional"] = "required") -> None:
         """Add the init parameters to the model config mapping.
 
         Parameters
@@ -185,7 +197,10 @@ class DeepChemModelConfigMapper:
         """
         self.model_config_mapping['init_params'][kind].extend(init_params)
 
-    def add_train_params(self, train_params: List, kind: Literal["required", "optional"] = "required") -> None:
+    def add_train_params(
+            self,
+            train_params: List,
+            kind: Literal["required", "optional"] = "required") -> None:
         """Add the train parameters to the model config mapping.
 
         Parameters
@@ -235,7 +250,9 @@ class DeepChemModelConfigMapper:
         """
         return self.model_config_mapping['model_class_name']
 
-    def get_init_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+    def get_init_params(self,
+                        kind: Literal["required", "optional",
+                                      None] = None) -> Dict:
         """Return the initialization parameters for the model.
 
         Parameters
@@ -255,7 +272,9 @@ class DeepChemModelConfigMapper:
             return self.model_config_mapping['init_params'][kind]
         return self.model_config_mapping['init_params']
 
-    def get_train_params(self, kind: Literal["required", "optional", None] = None) -> Dict:
+    def get_train_params(self,
+                         kind: Literal["required", "optional",
+                                       None] = None) -> Dict:
         """Return the train parameters for the model.
 
         Parameters
@@ -346,6 +365,7 @@ class DeepChemModelConfigMapper:
         """
         return repr(self.get_model_class())
 
+
 class ModelAddressWrapper(dict):
     """Wrapper for deepchem-server model name and deepchem model config.
 
@@ -404,21 +424,25 @@ class ModelAddressWrapper(dict):
         super().__init__()
         if args:
             if len(args) > 1:
-                raise TypeError(f"ModelAddressWrapper expected at most 1 arguments, got {len(args)}")
+                raise TypeError(
+                    f"ModelAddressWrapper expected at most 1 arguments, got {len(args)}"
+                )
             arg = args[0]  # type: ignore[index]
             if isinstance(arg, dict):
                 for key, value in arg.items():
                     self.__setitem__(key, value)
             else:
-                raise TypeError(f"ModelAddressWrapper expected dict, got {type(arg)}")
+                raise TypeError(
+                    f"ModelAddressWrapper expected dict, got {type(arg)}")
         if kwargs:
             for key, value in kwargs.items():
                 self.__setitem__(key, value)
 
     def get_model_config(
-            self,
-            key: str,
-            kind: Literal["model_name", "class_name"] = "model_name") -> Optional[DeepChemModelConfigMapper]:
+        self,
+        key: str,
+        kind: Literal["model_name", "class_name"] = "model_name"
+    ) -> Optional[DeepChemModelConfigMapper]:
         """Return the model config map given the model key.
 
         Parameters
@@ -441,7 +465,8 @@ class ModelAddressWrapper(dict):
                     return model_config_map
         return None
 
-    def get_model_name_from_class_name(self, model_class_name: str) -> Optional[str]:
+    def get_model_name_from_class_name(self,
+                                       model_class_name: str) -> Optional[str]:
         """Return the model name for the model class name.
 
         The class will be used when parsing the config.yaml file,
@@ -498,7 +523,10 @@ class ModelAddressWrapper(dict):
         list of str
             The model class names for the models.
         """
-        return [self.__dict__[key].get_model_class_name() for key in self.__dict__.keys()]
+        return [
+            self.__dict__[key].get_model_class_name()
+            for key in self.__dict__.keys()
+        ]
 
     def __setitem__(self, key: str, value: DeepChemModelConfigMapper) -> None:
         """Set item in the wrapper.

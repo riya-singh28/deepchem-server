@@ -4,6 +4,7 @@ import sys
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, force=True)
 logger = logging.getLogger("progress_logger")
 
+
 def log_progress(job_type: str, progress: int, message: str) -> None:
     """Log progress of a job.
 

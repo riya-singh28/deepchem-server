@@ -2,7 +2,13 @@ from typing import Any, Dict
 
 import deepchem_server.core as core
 
-program_map = {"featurize": core.featurize, "train": core.train, "evaluate": core.model_evaluator, "infer": core.infer}
+program_map = {
+    "featurize": core.featurize,
+    "train": core.train,
+    "evaluate": core.model_evaluator,
+    "infer": core.infer
+}
+
 
 class ComputeWorkflow:
     """A Compute Workflow is a workflow that runs on Deepchem Server.
@@ -54,7 +60,11 @@ class ComputeWorkflow:
         if 'program_name' not in self.program:
             raise ValueError("program_name not found in program")
         program_name: str = self.program['program_name']
-        params: Dict = {key: value for key, value in self.program.items() if key != 'program_name'}
+        params: Dict = {
+            key: value
+            for key, value in self.program.items()
+            if key != 'program_name'
+        }
         if program_name not in program_map:
             raise ValueError(f"{program_name} not in available programs")
 
