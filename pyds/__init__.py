@@ -9,7 +9,20 @@ __version__ = "0.1.0"
 
 from .base import BaseClient
 from .data import Data
-from .primitives import Primitives
+from .primitives.base import Primitive
+from .primitives.featurize import Featurize
+from .primitives.train import Train
+from .primitives.evaluate import Evaluate
+from .primitives.infer import Infer
 from .settings import Settings
 
-__all__ = ["Settings", "Primitives", "Data", "BaseClient"]
+__all__ = [
+    "Settings",
+    "Data",
+    "BaseClient",
+    "Primitive",
+    "Featurize",
+    "Train",
+    "Evaluate",
+    "Infer",
+]
