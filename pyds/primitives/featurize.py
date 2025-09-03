@@ -8,7 +8,6 @@ from typing import Any, Dict, Optional
 
 from .base import Primitive
 
-
 class Featurize(Primitive):
     """
     Primitive for featurization tasks.
@@ -69,7 +68,5 @@ class Featurize(Primitive):
         if label_column is not None:
             data["label_column"] = label_column
 
-        response = self._post(
-            "/primitive/featurize", json=data, headers={"Content-Type": "application/json"}
-        )
+        response = self._post("/primitive/featurize", json=data, headers={"Content-Type": "application/json"})
         return self._validate_response(response)

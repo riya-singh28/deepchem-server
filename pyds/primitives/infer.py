@@ -8,7 +8,6 @@ from typing import Any, Dict, Optional, Union
 
 from .base import Primitive
 
-
 class Infer(Primitive):
     """
     Primitive for inference tasks.

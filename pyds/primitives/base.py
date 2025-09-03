@@ -10,7 +10,6 @@ from typing import Any, Dict, Optional
 from ..base import BaseClient
 from ..settings import Settings
 
-
 class Primitive(BaseClient, ABC):
     """
     Abstract base class for all DeepChem Server primitives.
