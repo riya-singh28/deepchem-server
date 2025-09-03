@@ -10,7 +10,6 @@ from typing import Any, Dict, Optional
 from ..base import BaseClient
 from ..settings import Settings
 
-
 class Primitive(BaseClient, ABC):
     """
     Abstract base class for all DeepChem Server primitives.
@@ -48,9 +47,9 @@ class Primitive(BaseClient, ABC):
         """
         pass
 
-    def validate_common_params(
-        self, profile_name: Optional[str] = None, project_name: Optional[str] = None
-    ) -> tuple[str, str]:
+    def validate_common_params(self,
+                               profile_name: Optional[str] = None,
+                               project_name: Optional[str] = None) -> tuple[str, str]:
         """
         Validate and get common parameters used by all primitives.
 

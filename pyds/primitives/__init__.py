@@ -6,10 +6,10 @@ Each primitive implements the 'run' method to execute its specific functionality
 """
 
 from .base import Primitive
-from .featurize import Featurize
-from .train import Train
 from .evaluate import Evaluate
+from .featurize import Featurize
 from .infer import Infer
+from .train import Train
 
 __all__ = [
     "Primitive",
