@@ -10,10 +10,10 @@ __version__ = "0.1.0"
 from .base import BaseClient
 from .data import Data
 from .primitives.base import Primitive
-from .primitives.featurize import Featurize
-from .primitives.train import Train
 from .primitives.evaluate import Evaluate
+from .primitives.featurize import Featurize
 from .primitives.infer import Infer
+from .primitives.train import Train
 from .settings import Settings
 
 __all__ = [
