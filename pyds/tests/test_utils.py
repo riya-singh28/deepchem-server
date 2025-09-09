@@ -4,11 +4,10 @@ Test utilities and helper functions.
 
 import json
 import os
-from pathlib import Path
 import tempfile
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-def create_test_csv_file(data_rows: list, headers: list = None, suffix: str = ".csv") -> str:
+def create_test_csv_file(data_rows: list, headers: Optional[list] = None, suffix: str = ".csv") -> str:
     """
     Create a temporary CSV file with test data.
 
@@ -71,7 +70,12 @@ def cleanup_temp_file(file_path: str) -> None:
     except Exception:
         pass  # Ignore cleanup errors
 
-def create_test_settings_file(profile: str = None, project: str = None, base_url: str = None, **kwargs) -> str:
+def create_test_settings_file(
+    profile: Optional[str] = None,
+    project: Optional[str] = None,
+    base_url: Optional[str] = None,
+    **kwargs,
+) -> str:
     """
     Create a temporary settings file for testing.
 
@@ -95,7 +99,7 @@ def create_test_settings_file(profile: str = None, project: str = None, base_url
         json.dump(settings_data, f, indent=2)
         return f.name
 
-def mock_api_response(status_code: int = 200, data: Dict[str, Any] = None) -> Dict[str, Any]:
+def mock_api_response(status_code: int = 200, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Create a mock API response.
 
@@ -205,7 +209,7 @@ class TestDataManager:
     def __init__(self):
         self.temp_files = []
 
-    def create_csv_file(self, data_rows: list, headers: list = None) -> str:
+    def create_csv_file(self, data_rows: list, headers: Optional[list] = None) -> str:
         """Create CSV file and track for cleanup."""
         file_path = create_test_csv_file(data_rows, headers)
         self.temp_files.append(file_path)
@@ -262,7 +266,7 @@ def skip_if_server_unavailable(func):
 
     return wrapper
 
-def assert_valid_address(address: str, expected_parts: list = None):
+def assert_valid_address(address: str, expected_parts: Optional[list] = None):
     """
     Assert that an address has the expected format.
 
@@ -277,7 +281,7 @@ def assert_valid_address(address: str, expected_parts: list = None):
         for part in expected_parts:
             assert part in address, f"Expected '{part}' in address '{address}'"
 
-def assert_api_response(response: Dict[str, Any], expected_keys: list = None):
+def assert_api_response(response: Dict[str, Any], expected_keys: Optional[list] = None):
     """
     Assert that an API response has the expected structure.
 

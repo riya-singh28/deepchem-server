@@ -9,8 +9,7 @@ import uuid
 
 import pytest
 
-from pyds.data import Data
-from pyds.primitives import Featurize, Train
+from pyds.primitives import Train
 
 class TestTrain:
     """Unit tests for Train primitive."""

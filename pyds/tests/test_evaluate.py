@@ -2,13 +2,9 @@
 Unit tests for Evaluate primitive using live server.
 """
 
-import os
-import tempfile
-
 import pytest
 
-from pyds.data import Data
-from pyds.primitives import Evaluate, Featurize, Train
+from pyds.primitives import Evaluate
 
 class TestEvaluate:
     """Unit tests for Evaluate primitive."""

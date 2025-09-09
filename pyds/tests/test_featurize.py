@@ -7,7 +7,6 @@ import tempfile
 
 import pytest
 
-from pyds.data import Data
 from pyds.primitives import Featurize
 
 class TestFeaturize:

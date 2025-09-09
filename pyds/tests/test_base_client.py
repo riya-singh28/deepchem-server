@@ -11,7 +11,6 @@ import responses
 from pyds.base.client import BaseClient
 from pyds.settings import Settings
 
-
 class TestBaseClient:
     """Unit tests for BaseClient class."""
 
@@ -68,9 +67,7 @@ class TestBaseClient:
     @responses.activate
     def test_make_request_success(self, base_client):
         """Test successful HTTP request."""
-        responses.add(
-            responses.GET, "http://localhost:8000/test", json={"status": "ok"}, status=200
-        )
+        responses.add(responses.GET, "http://localhost:8000/test", json={"status": "ok"}, status=200)
 
         response = base_client._make_request("GET", "/test")
 
@@ -80,9 +77,9 @@ class TestBaseClient:
     def test_make_request_failure(self, base_client):
         """Test failed HTTP request."""
         with patch.object(
-            base_client.session,
-            "request",
-            side_effect=requests.RequestException("Connection error"),
+                base_client.session,
+                "request",
+                side_effect=requests.RequestException("Connection error"),
         ):
             with pytest.raises(Exception, match="API request failed: Connection error"):
                 base_client._make_request("GET", "/test")
@@ -90,9 +87,7 @@ class TestBaseClient:
     @responses.activate
     def test_get_request(self, base_client):
         """Test GET request method."""
-        responses.add(
-            responses.GET, "http://localhost:8000/test", json={"method": "GET"}, status=200
-        )
+        responses.add(responses.GET, "http://localhost:8000/test", json={"method": "GET"}, status=200)
 
         response = base_client._get("/test")
 
@@ -102,9 +97,7 @@ class TestBaseClient:
     @responses.activate
     def test_post_request(self, base_client):
         """Test POST request method."""
-        responses.add(
-            responses.POST, "http://localhost:8000/test", json={"method": "POST"}, status=200
-        )
+        responses.add(responses.POST, "http://localhost:8000/test", json={"method": "POST"}, status=200)
 
         response = base_client._post("/test", json={"data": "test"})
 
@@ -114,9 +107,7 @@ class TestBaseClient:
     @responses.activate
     def test_put_request(self, base_client):
         """Test PUT request method."""
-        responses.add(
-            responses.PUT, "http://localhost:8000/test", json={"method": "PUT"}, status=200
-        )
+        responses.add(responses.PUT, "http://localhost:8000/test", json={"method": "PUT"}, status=200)
 
         response = base_client._put("/test")
 
@@ -126,9 +117,7 @@ class TestBaseClient:
     @responses.activate
     def test_delete_request(self, base_client):
         """Test DELETE request method."""
-        responses.add(
-            responses.DELETE, "http://localhost:8000/test", json={"method": "DELETE"}, status=200
-        )
+        responses.add(responses.DELETE, "http://localhost:8000/test", json={"method": "DELETE"}, status=200)
 
         response = base_client._delete("/test")
 

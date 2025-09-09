@@ -10,7 +10,6 @@ import responses
 
 from pyds.data import Data
 
-
 class TestData:
     """Unit tests for Data class."""
 
@@ -40,9 +39,9 @@ class TestData:
         with open(temp_test_file, "w") as f:
             f.write("test,data\n1,2")
 
-        result = data_client.upload_data(
-            file_path=temp_test_file, filename="custom_name.csv", description="Test description"
-        )
+        result = data_client.upload_data(file_path=temp_test_file,
+                                         filename="custom_name.csv",
+                                         description="Test description")
 
         assert result == sample_upload_response
 
@@ -65,9 +64,7 @@ class TestData:
         assert result == sample_upload_response
 
     @responses.activate
-    def test_upload_data_with_profile_project_override(
-        self, data_client, temp_test_file, sample_upload_response
-    ):
+    def test_upload_data_with_profile_project_override(self, data_client, temp_test_file, sample_upload_response):
         """Test data upload with profile and project override."""
         responses.add(
             responses.POST,
@@ -123,7 +120,6 @@ class TestData:
     @responses.activate
     def test_upload_data_filename_from_path(self, data_client, temp_test_file):
         """Test upload_data uses filename from path when not provided."""
-        expected_filename = Path(temp_test_file).name
 
         responses.add(
             responses.POST,

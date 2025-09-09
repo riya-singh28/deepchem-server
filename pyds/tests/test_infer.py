@@ -2,13 +2,9 @@
 Unit tests for Infer primitive using live server.
 """
 
-import os
-import tempfile
-
 import pytest
 
-from pyds.data import Data
-from pyds.primitives import Featurize, Infer, Train
+from pyds.primitives import Infer
 
 class TestInfer:
     """Unit tests for Infer primitive."""

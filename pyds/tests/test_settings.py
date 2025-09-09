@@ -8,8 +8,6 @@ from pathlib import Path
 import tempfile
 from unittest.mock import mock_open, patch
 
-import pytest
-
 from pyds.settings import Settings
 
 class TestSettings:
@@ -84,7 +82,7 @@ class TestSettings:
         if os.path.exists(temp_settings_file):
             os.remove(temp_settings_file)
 
-        settings = Settings(settings_file=temp_settings_file)
+        Settings(settings_file=temp_settings_file)
 
         assert os.path.exists(temp_settings_file)
 
@@ -205,7 +203,7 @@ class TestSettings:
         # File should not exist now
         assert not os.path.exists(temp_file)
 
-        settings = Settings(settings_file=temp_file)
+        Settings(settings_file=temp_file)
 
         # File should be created
         assert os.path.exists(temp_file)
