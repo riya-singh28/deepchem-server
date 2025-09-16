@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import deepchem as dc
 from deepchem_server.core import cards, splitter, config, featurize
@@ -19,7 +20,9 @@ def test_k_fold_split_deepchem_dataset(disk_datastore):
 
 def test_k_fold_scaffold_split_deepchem_dataset(disk_datastore):
     """Test k-fold scaffold split on deepchem dataset"""
-    df = pd.read_csv('./assets/zinc5k.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(current_dir, "assets/zinc5k.csv")
+    df = pd.read_csv(dataset_path)
     config.set_datastore(disk_datastore)
     card = DataCard(address='', file_type='csv', data_type='pandas.DataFrame')
     data_address = disk_datastore.upload_data_from_memory(df, "test.csv", card)
@@ -41,7 +44,9 @@ def test_k_fold_scaffold_split_deepchem_dataset(disk_datastore):
 
 def test_k_fold_stratified_split_deepchem_dataset(disk_datastore):
     """Test k-fold stratified split on deepchem dataset"""
-    df = pd.read_csv('./assets/zinc5k.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(current_dir, "assets/zinc5k.csv")
+    df = pd.read_csv(dataset_path)
     config.set_datastore(disk_datastore)
     card = DataCard(address='', file_type='csv', data_type='pandas.DataFrame')
     data_address = disk_datastore.upload_data_from_memory(df, "test.csv", card)
@@ -63,7 +68,9 @@ def test_k_fold_stratified_split_deepchem_dataset(disk_datastore):
 
 def test_tvt_scaffold_split_deepchem_dataset(disk_datastore):
     """Test train-valid-test scaffold split on deepchem dataset"""
-    df = pd.read_csv('./assets/zinc5k.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(current_dir, "assets/zinc5k.csv")
+    df = pd.read_csv(dataset_path)
     config.set_datastore(disk_datastore)
     card = DataCard(address='', file_type='csv', data_type='pandas.DataFrame')
     data_address = disk_datastore.upload_data_from_memory(df, "test.csv", card)
@@ -99,7 +106,9 @@ def test_tvt_scaffold_split_deepchem_dataset(disk_datastore):
 
 def test_tvt_stratified_split_deepchem_dataset(disk_datastore):
     """Test train-valid-test stratified split on deepchem dataset"""
-    df = pd.read_csv('./assets/zinc5k.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(current_dir, "assets/zinc5k.csv")
+    df = pd.read_csv(dataset_path)
     config.set_datastore(disk_datastore)
     card = DataCard(address='', file_type='csv', data_type='pandas.DataFrame')
     data_address = disk_datastore.upload_data_from_memory(df, "test.csv", card)
