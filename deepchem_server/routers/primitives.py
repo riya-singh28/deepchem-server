@@ -1,4 +1,5 @@
 import json
+import math
 from typing import Annotated, Dict, List, Optional, Union
 
 from fastapi import APIRouter, HTTPException
@@ -12,7 +13,6 @@ router = APIRouter(
     prefix="/primitive",
     tags=["primitive"],
 )
-
 
 @router.post("/featurize")
 async def featurize(
@@ -87,15 +87,11 @@ async def featurize(
     }
 
     try:
-        result = run_job(profile_name=profile_name,
-                         project_name=project_name,
-                         program=program)
+        result = run_job(profile_name=profile_name, project_name=project_name, program=program)
     except Exception as e:
-        raise HTTPException(status_code=500,
-                            detail=f"Featurization failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Featurization failed: {str(e)}")
 
     return {"featurized_file_address": str(result)}
-
 
 @router.post("/train")
 async def train(
@@ -167,15 +163,11 @@ async def train(
     }
 
     try:
-        result = run_job(profile_name=profile_name,
-                         project_name=project_name,
-                         program=program)
+        result = run_job(profile_name=profile_name, project_name=project_name, program=program)
     except Exception as e:
-        raise HTTPException(status_code=500,
-                            detail=f"Training failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Training failed: {str(e)}")
 
     return {"trained_model_address": str(result)}
-
 
 @router.post("/evaluate")
 async def evaluate(
@@ -218,15 +210,11 @@ async def evaluate(
     }
 
     try:
-        result = run_job(profile_name=profile_name,
-                         project_name=project_name,
-                         program=program)
+        result = run_job(profile_name=profile_name, project_name=project_name, program=program)
     except Exception as e:
-        raise HTTPException(status_code=500,
-                            detail=f"Evaluation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Evaluation failed: {str(e)}")
 
     return {"evaluation_result_address": str(result)}
-
 
 @router.post("/infer")
 async def infer(
@@ -237,8 +225,7 @@ async def infer(
     output: Annotated[str, Body()],
     dataset_column: Annotated[Optional[str], Body()] = None,
     shard_size: Annotated[Optional[int], Body()] = 8192,
-    threshold: Annotated[Optional[Union[int, float]],
-                         Body()] = None,
+    threshold: Annotated[Optional[Union[int, float]], Body()] = None,
 ) -> dict:
     """
     Submits an inference job
@@ -281,17 +268,13 @@ async def infer(
             if threshold.lower() == "none":
                 threshold = None
             else:
-                raise HTTPException(
-                    status_code=400,
-                    detail={f"Invalid threshold value: {threshold}"})
+                raise HTTPException(status_code=400, detail={f"Invalid threshold value: {threshold}"})
 
     if isinstance(shard_size, str):
         try:
             shard_size = int(shard_size)
         except ValueError:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid shard_size value: {shard_size}")
+            raise HTTPException(status_code=400, detail=f"Invalid shard_size value: {shard_size}")
 
     # Handle None values
     if dataset_column == "None":
@@ -309,15 +292,11 @@ async def infer(
     }
 
     try:
-        result = run_job(profile_name=profile_name,
-                         project_name=project_name,
-                         program=program)
+        result = run_job(profile_name=profile_name, project_name=project_name, program=program)
     except Exception as e:
-        raise HTTPException(status_code=500,
-                            detail=f"Inference failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
 
     return {"inference_results_address": str(result)}
-
 
 @router.post("/train-valid-test-split")
 async def train_valid_test_split(
@@ -325,9 +304,9 @@ async def train_valid_test_split(
     project_name: Annotated[str, Body()],
     splitter_type: Annotated[str, Body()],
     dataset_address: Annotated[str, Body()],
-    frac_train: Optional[float] = 0.8,
-    frac_valid: Optional[float] = 0.1,
-    frac_test: Optional[float] = 0.1,
+    frac_train: float = 0.8,
+    frac_valid: float = 0.1,
+    frac_test: float = 0.1,
 ) -> dict:
     """
     API for making train, test and validation split of data
@@ -338,11 +317,11 @@ async def train_valid_test_split(
         Type of splitter to use - `random` or `index` or `scaffold`
     dataset_address: str
         dataset to split
-    frac_train: str
+    frac_train: float
         fraction of train dataset
-    frac_test: str
+    frac_test: float
         fraction of train dataset
-    frac_valid: str
+    frac_valid: float
         fraction of train dataset
     """
 
@@ -356,15 +335,11 @@ async def train_valid_test_split(
         "frac_valid": frac_valid,
     }
 
-    if frac_valid + frac_test + frac_train != 1:
-        raise HTTPException(status_code=400,
-                            detail=f"Invalid fractions: {frac_train}, {frac_test}, {frac_valid}")
+    if not math.isclose(frac_valid + frac_test + frac_train, 1.0, rel_tol=1e-9, abs_tol=1e-9):
+        raise HTTPException(status_code=400, detail=f"Invalid fractions: {frac_train}, {frac_test}, {frac_valid}")
     try:
-        result = run_job(profile_name=profile_name,
-                         project_name=project_name,
-                         program=program)
+        result = run_job(profile_name=profile_name, project_name=project_name, program=program)
     except Exception as e:
-        raise HTTPException(status_code=500,
-                            detail=f"Train valid test split failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Train valid test split failed: {str(e)}")
 
     return {"train_valid_test_split_results_address": result}
