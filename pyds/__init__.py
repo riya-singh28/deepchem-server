@@ -14,8 +14,8 @@ from .primitives.featurize import Featurize
 from .primitives.train import Train
 from .primitives.evaluate import Evaluate
 from .primitives.infer import Infer
+from .primitives.splitter import TVTSplit
 from .settings import Settings
-from .primitives.tvt_splitter import TVTSplit
 
 __all__ = [
     "Settings",
