@@ -317,3 +317,54 @@ async def infer(
                             detail=f"Inference failed: {str(e)}")
 
     return {"inference_results_address": str(result)}
+
+
+@router.post("/train-valid-test-split")
+async def train_valid_test_split(
+    profile_name: Annotated[str, Body()],
+    project_name: Annotated[str, Body()],
+    splitter_type: Annotated[str, Body()],
+    dataset_address: Annotated[str, Body()],
+    frac_train: Optional[float] = 0.8,
+    frac_valid: Optional[float] = 0.1,
+    frac_test: Optional[float] = 0.1,
+) -> dict:
+    """
+    API for making train, test and validation split of data
+
+    Parameters
+    ----------
+    splitter_type: str
+        Type of splitter to use - `random` or `index` or `scaffold`
+    dataset_address: str
+        dataset to split
+    frac_train: str
+        fraction of train dataset
+    frac_test: str
+        fraction of train dataset
+    frac_valid: str
+        fraction of train dataset
+    """
+
+    # Build the program for Train Valid Test split
+    program = {
+        "program_name": "train_valid_test_split",
+        "splitter_type": splitter_type,
+        "dataset_address": dataset_address,
+        "frac_train": frac_train,
+        "frac_test": frac_test,
+        "frac_valid": frac_valid,
+    }
+
+    if frac_valid + frac_test + frac_train != 1:
+        raise HTTPException(status_code=400,
+                            detail=f"Invalid fractions: {frac_train}, {frac_test}, {frac_valid}")
+    try:
+        result = run_job(profile_name=profile_name,
+                         project_name=project_name,
+                         program=program)
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Train valid test split failed: {str(e)}")
+
+    return {"train_valid_test_split_results_address": result}

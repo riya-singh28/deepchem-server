@@ -6,7 +6,8 @@ program_map = {
     "featurize": core.featurize,
     "train": core.train,
     "evaluate": core.model_evaluator,
-    "infer": core.infer
+    "infer": core.infer,
+    "train_valid_test_split": core.train_valid_test_split,
 }
 
 
