@@ -10,15 +10,17 @@ class TVTSplit(Primitive):
     Primitive for Train-Valid-Test Split tasks.
     This class handles submitting train-valid-test split jobs to the DeepChem Server API.
     """
+
     def run(
-            self,
-            splitter_type: str,
-            dataset_address: str,
-            frac_train: float = 0.8,
-            frac_test: float = 0.1,
-            frac_valid: float = 0.1,
-            profile_name: Optional[str] = None,
-            project_name: Optional[str] = None,) -> Dict:
+        self,
+        splitter_type: str,
+        dataset_address: str,
+        frac_train: float = 0.8,
+        frac_test: float = 0.1,
+        frac_valid: float = 0.1,
+        profile_name: Optional[str] = None,
+        project_name: Optional[str] = None,
+    ) -> Dict:
         """
         Performs train-validation-test split on a dataset
 
