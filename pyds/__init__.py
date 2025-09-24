@@ -15,7 +15,7 @@ from .primitives.train import Train
 from .primitives.evaluate import Evaluate
 from .primitives.infer import Infer
 from .settings import Settings
-from .primitives.tvt_splitter import TvtSplit
+from .primitives.tvt_splitter import TVTSplit
 
 __all__ = [
     "Settings",
@@ -26,5 +26,5 @@ __all__ = [
     "Train",
     "Evaluate",
     "Infer",
-    "TvtSplit",
+    "TVTSplit",
 ]

@@ -1,17 +1,13 @@
 """
 Train-Valid-Test Split primitive module for DeepChem Server.
-
-Contains the TvtSplit class for splitter tasks.
 """
 
 from typing import Dict, Optional
-
 from .base import Primitive
 
-class TvtSplit(Primitive):
+class TVTSplit(Primitive):
     """
     Primitive for Train-Valid-Test Split tasks.
-
     This class handles submitting train-valid-test split jobs to the DeepChem Server API.
     """
     def run(
@@ -24,7 +20,7 @@ class TvtSplit(Primitive):
             profile_name: Optional[str] = None,
             project_name: Optional[str] = None,) -> Dict:
         """
-        Performs train test validation split on a dataset
+        Performs train-validation-test split on a dataset
 
         Args:
             splitter_type: Splitter type to use when splitting dataset.
@@ -40,20 +36,6 @@ class TvtSplit(Primitive):
         Raises:
             ValueError: If required settings are missing
             requests.exceptions.RequestException: If API request fails
-
-
-        .. list-table:: Supported splitters
-          :widths: 25 50
-          :header-rows: 1
-
-          * - Splitter type
-            - Description
-          * - random
-            - Splits data into random subsets
-          * - index
-            - Splits data into subsets by index
-          * - scaffold
-            - Splits data into subsets using scaffolds
         """
         profile, project = self.validate_common_params(profile_name, project_name)
         data = {
