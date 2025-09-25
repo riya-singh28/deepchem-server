@@ -10,6 +10,7 @@ from .evaluate import Evaluate
 from .featurize import Featurize
 from .infer import Infer
 from .train import Train
+from .splitter import TVTSplit
 
 __all__ = [
     "Primitive",
@@ -17,4 +18,5 @@ __all__ = [
     "Train",
     "Evaluate",
     "Infer",
+    "TVTSplit",
 ]
