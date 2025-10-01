@@ -9,8 +9,9 @@ from .base import Primitive
 from .evaluate import Evaluate
 from .featurize import Featurize
 from .infer import Infer
-from .train import Train
 from .splitter import TVTSplit
+from .train import Train
+
 
 __all__ = [
     "Primitive",

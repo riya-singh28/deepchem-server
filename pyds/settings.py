@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
+
 class Settings:
     """
     Settings class for managing profile and project configurations.

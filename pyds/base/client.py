@@ -8,6 +8,7 @@ import requests
 
 from ..settings import Settings
 
+
 class BaseClient:
     """
     Base client class containing common functionality for all DeepChem API clients.
