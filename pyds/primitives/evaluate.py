@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 
 from .base import Primitive
 
+
 class Evaluate(Primitive):
     """
     Primitive for evaluation tasks.

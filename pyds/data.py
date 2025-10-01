@@ -12,6 +12,7 @@ from requests_toolbelt import MultipartEncoder
 from .base import BaseClient
 from .settings import Settings
 
+
 class Data(BaseClient):
     """
     Client for interacting with DeepChem Server data endpoints.
