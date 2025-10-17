@@ -1,14 +1,12 @@
-Core Primitives
-===============
-
-This section documents the core primitives that form the backbone of DeepChem Server's machine learning workflow. These primitives provide the essential functionality for molecular machine learning pipelines: data featurization, model training, inference, and evaluation.
-
 Overview
 --------
 
-DeepChem Server provides five main primitives that work together to create end-to-end machine learning workflows:
+The core primitives that form the backbone of DeepChem Server's machine learning workflow.
+These primitives provide the essential functionality for molecular machine learning pipelines.
+Currently, Deepchem Server provides the following primitives: (Other primitives are planned to be added soon)
 
 * **Featurize**: Transform raw molecular data into machine learning features
+* **Train Valid Test Split**: Split the dataset into training, validation, and test sets
 * **Train**: Build and train machine learning models on featurized datasets
 * **Inference**: Run predictions on new data using trained models
 * **Evaluation**: Assess model performance using various metrics
@@ -105,7 +103,21 @@ Molecular Docking
 
 The docking primitive performs molecular docking between proteins and ligands using AutoDock VINA to predict binding poses and affinities.
 
+**Key Features:**
+
+* Generates protein-ligand binding poses using AutoDock VINA
+* Supports both PDB and PDBQT output formats
+* Automatically splits PDBQT files for multiple binding modes
+* Returns DeepChem addresses to all generated files
+
+
 .. autofunction:: deepchem_server.core.docking.generate_pose
+
+Supporting Functions
+~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: deepchem_server.core.docking.split_pdbqt_docked_ligands
+   :no-index:
 
 Available Metrics
 ~~~~~~~~~~~~~~~~~
