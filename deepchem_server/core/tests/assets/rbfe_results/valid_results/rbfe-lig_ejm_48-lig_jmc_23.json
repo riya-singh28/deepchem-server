@@ -1,0 +1,12 @@
+{
+  "componentA_name": "lig_ejm_48",
+  "componentB_name": "lig_jmc_23",
+  "is_dry_run": false,
+  "dry_run_status": null,
+  "complex_dG": "10.571585470060269 kilocalorie / mole",
+  "complex_dG_uncertainty": "0.15820823351772856 kilocalorie / mole",
+  "solvent_dG": "11.963897997467503 kilocalorie / mole",
+  "solvent_dG_uncertainty": "0.025679779014129264 kilocalorie / mole",
+  "edge_ddG": "-1.3923125274072348 kilocalorie / mole",
+  "edge_ddG_uncertainty": "0.16027880771647462 kilocalorie / mole"
+}
