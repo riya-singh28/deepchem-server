@@ -1,0 +1,1 @@
+This directory is for Free Energy Perturbation (FEP) development.
