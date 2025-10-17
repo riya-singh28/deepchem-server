@@ -1,13 +1,14 @@
+import ast
 import json
 import math
-from typing import Annotated, Dict, List, Optional, Union
+from typing import Annotated, Dict, List, Optional, Union, Any
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Body
 
 from deepchem_server.core import model_mappings
 from deepchem_server.core.feat import featurizer_map
-from deepchem_server.utils import parse_boolean_none_values_from_kwargs, run_job
+from deepchem_server.utils import parse_boolean_none_values_from_kwargs, run_job, parse_dict_with_datatypes
 
 
 router = APIRouter(
@@ -402,3 +403,221 @@ async def docking_generate_pose(
         raise HTTPException(status_code=500, detail=f"VINA docking failed: {str(e)}")
 
     return {"docking_results_address": str(result)}
+
+
+@router.post("/fep/calculate_rbfe")
+async def relative_binding_free_energy(
+    profile_name: Annotated[str, Body()],
+    project_name: Annotated[str, Body()],
+    solvent: Dict[Any, Any],
+    ligands_sdf_address: str,
+    cleaned_protein_pdb_address: str,
+    overridden_rbfe_settings: Dict[Any, Any],
+    radial_network_central_ligand: Optional[str],
+    dry_run: bool = False,
+    run_edges_in_parallel: bool = False,
+    network_type: Optional[str] = "MINIMAL_SPANNING",
+    scorer_type: Optional[str] = 'LOMAP',
+    output_key: Optional[str] = "output_key",
+) -> dict:
+    """API Route for submitting relative binding free energy calculation jobs.
+
+    Parameters
+    ----------
+    solvent : Dict
+        Solvent component dictionary, by default None
+    ligands_sdf_address : str, optional
+        Chiron datastore address of the ligands.sdf file, by default None
+    reference_ligand : str, optional
+        The name of the reference ligand, for example "benzene", "toluene" etc.
+        This MUST be one of the ligands present in the ligands .SDF file, by default None
+    cleaned_protein_pdb_address : str, optional
+        Chiron datastore address of a protein.pdb file, by default None
+    overridden_rbfe_settings : Dict, optional
+        The serialized JSON representation of the RelativeHybridTopologyProtocolSettings object.
+        Only the settings that are to be overridden should be included in this JSON string, by default None
+    dry_run : bool, optional
+        Whether to run the RBFE calculation in dry run mode, by default False
+    run_edges_in_parallel : bool, optional
+        Whether to run the edges in parallel, by default False
+    network_type : str, optional
+        The type of network to use, for example RADIAL or MINIMAL_SPANNING. By default, MINIMAL_SPANNING.
+    scorer_type : str, optional
+        The type of scorer to use, for example LOMAP. By default, LOMAP.
+    output_key : str, optional
+        The output directory for storing the results, by default "output_key"
+
+    Returns
+    -------
+    dict
+        Dictionary containing the address of the relative binding free energy results.
+    """
+    from deepchem_server.core.fep.rbfe.utils.constants import NetworkPlanningConstants
+
+    if overridden_rbfe_settings is not None:
+        try:
+            for key, value in overridden_rbfe_settings.items():
+                if key == 'protocol_repeats':
+                    if value and len(value) < 10000:
+                        parsed_value = ast.literal_eval(value)
+                        overridden_rbfe_settings[key] = parsed_value
+                        continue
+                    else:
+                        raise HTTPException(status_code=422, \
+                                            detail="Invalid value for 'protocol_repeats' setting.")
+                overridden_rbfe_settings[key] = parse_dict_with_datatypes(value)
+        except (ValueError, SyntaxError):
+            raise HTTPException(status_code=422, detail="Could not parse Settings")
+
+    if solvent is None:
+        raise HTTPException(status_code=400, detail="Solvent is required")
+    try:
+        solvent = parse_dict_with_datatypes(solvent)
+    except (ValueError, SyntaxError):
+        raise HTTPException(status_code=422, detail="Could not parse Solvent Settings")
+
+    # Validate the network type
+    try:
+        network_type = network_type.upper()  # type: ignore
+        NetworkPlanningConstants.PerturbationNetworkType(network_type)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail=  # noqa: E251
+            f"Invalid network type: {network_type}. Must be one of {[NetworkPlanningConstants.PerturbationNetworkType._member_names_]}"
+        )
+
+    # Validate the scorer type
+    try:
+        if not scorer_type or scorer_type == 'None':
+            scorer_type = None
+        else:
+            NetworkPlanningConstants.ScorerType(scorer_type)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail=  # noqa: E251
+            f"Invalid scorer type: {scorer_type}. Must be one of {[*NetworkPlanningConstants.ScorerType._member_names_, None]}"
+        )
+
+    # Parse reference_ligand
+    if isinstance(radial_network_central_ligand, str):
+        try:
+            radial_network_central_ligand = ast.literal_eval(radial_network_central_ligand)
+        except (ValueError, SyntaxError):
+            if radial_network_central_ligand == '':
+                radial_network_central_ligand = None
+
+    program: Dict = {
+        "program_name": "relative_binding_free_energy",
+        "ligands_sdf_address": ligands_sdf_address,
+        "cleaned_protein_pdb_address": cleaned_protein_pdb_address,
+        "network_type": network_type,
+        "scorer_type": scorer_type,
+        "solvent": solvent,
+        "overridden_rbfe_settings": overridden_rbfe_settings,
+        "dry_run": dry_run,
+        "radial_network_central_ligand": radial_network_central_ligand,
+        "output_key": output_key,
+    }
+
+    if run_edges_in_parallel:
+        raise NotImplementedError("Parallel edge execution is not implemented")
+    else:
+        try:
+            result = run_job(profile_name=profile_name, project_name=project_name, program=program)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Relative binding free energy calculation failed: {str(e)}")
+    return {"relative_binding_free_energy_results_address": str(result)}
+
+
+@router.post("/fep/collate_rbfe_results")
+async def collate_rbfe_results(
+    profile_name: Annotated[str, Body()],
+    project_name: Annotated[str, Body()],
+    result_files_addresses: Annotated[List[str], Body()],
+    output_file_name: Annotated[str, Body()],
+    reference_ligand: Annotated[Optional[str], Body()] = None,
+    reference_ligand_dg_value: Annotated[Optional[str], Body()] = None,
+    reference_ligand_dg_value_uncertainty: Annotated[Optional[str], Body()] = None,
+) -> dict:
+    """API Route for submitting relative collate RBFE results jobs.
+
+    Parameters
+    ----------
+    result_files_addresses : List[str], optional
+        The list of chiron addressed of RBFE results files to be processed, by default Body()
+    reference_ligand : Union[None, str], optional
+        The reference ligand whose DG value is know, by default Body(None)
+    reference_ligand_dg_value : Union[None, str], optional
+        The DG value of the reference ligand, by default Body(None)
+    reference_ligand_dg_value_uncertainty : Union[None, str], optional
+        The uncertainty in the DG value of the reference ligand, by default Body(None)
+    output_file_name : str, optional
+        Name of the generated output file, by default Body()
+
+    Returns
+    -------
+    dict
+        Dictionary containing the address of the collated relative binding free energy results.
+    """
+    import pint
+    from deepchem_server.core.fep.rbfe.collate_rbfe_results import (
+        process_input_files,
+        get_ligands_from_results,
+    )
+
+    try:
+        if reference_ligand_dg_value:
+            pint.Quantity(reference_ligand_dg_value)  # type: ignore
+    except Exception:
+        raise HTTPException(
+            status_code=422,
+            detail=  # noqa: E251
+            "Please enter a valid PlainQuantity string for reference ligand dg value. For example, 2.0 kilocalorie/mol",
+        )
+
+    try:
+        if reference_ligand_dg_value_uncertainty:
+            pint.Quantity(reference_ligand_dg_value_uncertainty)  # type: ignore
+    except Exception:
+        raise HTTPException(
+            status_code=422,
+            detail=  # noqa: E251
+            "Please enter a valid PlainQuantity string for reference ligand dg value uncertainty. For example, 0.02 kilocalorie/mol",
+        )
+
+    simulation_results = process_input_files(result_files_addresses)
+    ligands = get_ligands_from_results(simulation_results)
+
+    if not ligands:
+        raise HTTPException(status_code=422, detail="No ligands found in given results")
+
+    if reference_ligand and reference_ligand not in ligands:
+        raise HTTPException(
+            status_code=422,
+            detail=  # noqa: E251
+            f"Reference ligand {reference_ligand} not found in given results",
+        )
+
+    # The chiron language does not support lists with single quotes, so we replace all single quotes with double quotes.
+    result_files_string_representation = (str(result_files_addresses)).replace("'", '"')
+
+    program: Dict = {
+        "program_name": "collate_rbfe_results",
+        "result_files_addresses": result_files_string_representation,
+        "reference_ligand": reference_ligand,
+        "reference_ligand_dg_value": reference_ligand_dg_value,
+        "reference_ligand_dg_value_uncertainty": reference_ligand_dg_value_uncertainty,
+        "output_file_name": output_file_name,
+    }
+    try:
+        result = run_job(
+            profile_name=profile_name,
+            project_name=project_name,
+            program=program,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Collate relative binding free energy results failed: {str(e)}")
+
+    return {"collate_relative_binding_free_energy_results_address": str(result)}
