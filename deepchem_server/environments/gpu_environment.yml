@@ -4,6 +4,7 @@ dependencies:
   - conda-forge::pdbfixer
   - conda-forge::vina
   - nvidia::cudatoolkit
+  - conda-forge::openfe=1.1.0
   - pip
   - pip:
       - pandas

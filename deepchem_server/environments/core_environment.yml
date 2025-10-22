@@ -3,6 +3,7 @@ dependencies:
   - python=3.11
   - conda-forge::pdbfixer
   - conda-forge::vina
+  - conda-forge::openfe=1.1.0
   - pip
   - pip:
       - pandas
