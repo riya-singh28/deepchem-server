@@ -11,6 +11,7 @@ from .featurize import Featurize
 from .infer import Infer
 from .splitter import TVTSplit
 from .train import Train
+from .rbfe import RelativeBindingFreeEnergy
 
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "Evaluate",
     "Infer",
     "TVTSplit",
+    "RelativeBindingFreeEnergy",
 ]
