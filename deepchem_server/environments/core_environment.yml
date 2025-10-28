@@ -4,6 +4,7 @@ dependencies:
   - conda-forge::pdbfixer
   - conda-forge::vina
   - conda-forge::openfe=1.1.0
+  - conda-forge::openmm=8.0
   - pip
   - pip:
       - pandas
@@ -23,3 +24,4 @@ dependencies:
       - dgl
       - dgllife
       - torch_geometric
+      - importlib_resources
