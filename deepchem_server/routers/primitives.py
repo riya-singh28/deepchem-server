@@ -427,12 +427,12 @@ async def relative_binding_free_energy(
     solvent : Dict
         Solvent component dictionary, by default None
     ligands_sdf_address : str, optional
-        Chiron datastore address of the ligands.sdf file, by default None
+        DeepChem datastore address of the ligands.sdf file, by default None
     reference_ligand : str, optional
         The name of the reference ligand, for example "benzene", "toluene" etc.
         This MUST be one of the ligands present in the ligands .SDF file, by default None
     cleaned_protein_pdb_address : str, optional
-        Chiron datastore address of a protein.pdb file, by default None
+        Deepchem datastore address of a protein.pdb file, by default None
     overridden_rbfe_settings : Dict, optional
         The serialized JSON representation of the RelativeHybridTopologyProtocolSettings object.
         Only the settings that are to be overridden should be included in this JSON string, by default None
@@ -546,7 +546,7 @@ async def collate_rbfe_results(
     Parameters
     ----------
     result_files_addresses : List[str], optional
-        The list of chiron addressed of RBFE results files to be processed, by default Body()
+        The list of DeepChem addressed of RBFE results files to be processed, by default Body()
     reference_ligand : Union[None, str], optional
         The reference ligand whose DG value is know, by default Body(None)
     reference_ligand_dg_value : Union[None, str], optional
@@ -600,7 +600,7 @@ async def collate_rbfe_results(
             f"Reference ligand {reference_ligand} not found in given results",
         )
 
-    # The chiron language does not support lists with single quotes, so we replace all single quotes with double quotes.
+    # The DeepChem language does not support lists with single quotes, so we replace all single quotes with double quotes.
     result_files_string_representation = (str(result_files_addresses)).replace("'", '"')
 
     program: Dict = {
