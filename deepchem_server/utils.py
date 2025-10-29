@@ -1,3 +1,4 @@
+import ast
 import logging
 import os
 from typing import Dict
@@ -119,3 +120,40 @@ def parse_boolean_none_values_from_kwargs(kwargs: Dict) -> Dict:
         else:
             parsed_kwargs[key] = value
     return parsed_kwargs
+
+
+def parse_dict_with_datatypes(dict_to_parse):
+    """
+    Parses a dictionary with string values and returns a new dictionary with
+    the same keys but with the values converted to their corresponding datatypes.
+
+    Parameters
+    ----------
+    dict_to_parse: dict
+        The dictionary to parse.
+
+    Returns
+    -------
+    parsed_dict: dict
+        A new dictionary with the same keys as the input dictionary but with
+        the values converted to their corresponding datatypes.
+    """
+    parsed_dict = {}
+    if dict_to_parse is None:
+        return parsed_dict
+
+    for key, value in dict_to_parse.items():
+        # Check if the value is a non-empty string
+        parsed_value = value
+        if isinstance(value, str):
+            # Evaluate the string using ast.literal_eval(). Throws ValueError and SyntaxError on failure
+            if value.lower() == "true":
+                parsed_value = True
+            elif value.lower() == "false":
+                parsed_value = False
+            elif value.lower() == "none":
+                parsed_value = None
+            elif value and len(value) < 10000:
+                parsed_value = ast.literal_eval(value)
+        parsed_dict[key] = parsed_value
+    return parsed_dict

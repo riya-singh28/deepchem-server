@@ -1,0 +1,8 @@
+{
+  "componentA_name": "lig_ejm_48",
+  "componentB_name": "lig_jmc_28
+  "complex_dG": "-0.10938937608474975 kilocalorie / mole
+  "complex_dG_uncertainty": "0.1446714097088709 kilocalorie / mole",
+  "solvent_dG": "1.6703655764347582 kilocalorie / mole",
+  "solvent_dG_uncertainty": "0.07900767162058703 kilocalorie / mole",
+}

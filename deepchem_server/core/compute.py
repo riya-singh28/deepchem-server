@@ -10,6 +10,8 @@ program_map = {
     "infer": core.infer,
     "train_valid_test_split": core.train_valid_test_split,
     "generate_pose": core.generate_pose,
+    "relative_binding_free_energy": core.run_rbfe,
+    "collate_rbfe_results": core.collate_rbfe_results,
 }
 
 

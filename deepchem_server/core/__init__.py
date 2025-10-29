@@ -6,3 +6,5 @@ from deepchem_server.core.inference import infer
 from deepchem_server.core.splitter import train_valid_test_split
 from deepchem_server.core.train import train
 from deepchem_server.core.docking import generate_pose
+from deepchem_server.core.fep.rbfe.run_rbfe import run_rbfe
+from deepchem_server.core.fep.rbfe.collate_rbfe_results import collate_rbfe_results
