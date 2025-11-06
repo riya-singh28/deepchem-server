@@ -18,12 +18,6 @@ from deepchem_server.core import model_mappings
 from deepchem_server.core.address import DeepchemAddress
 from deepchem_server.core.cards import Card, DataCard, ModelCard  # yapf: disable
 
-
-try:
-    import mdtraj as md
-except ModuleNotFoundError:
-    pass
-
 logger = logging.getLogger(__name__)
 
 # List of kinds supported by deepchem server, used to determine whether a file is a card or not and to determine the kind of the object
@@ -516,13 +510,11 @@ class DiskDataStore(DataStore):
         if path.endswith('.cdc'):
             with open(path, 'r') as f:
                 card_data = f.readlines()
-            card = DataCard.from_json(card_data[0])
-            return card
+            return DataCard.from_json(card_data[0])
         if path.endswith('.cmc'):
             with open(path, 'r') as f:
                 card_data = f.readlines()
-            card = ModelCard.from_json(card_data[0])
-            return card
+            return ModelCard.from_json(card_data[0])
         return None
 
     def get_data(self, address, fetch_sample: bool = False):
@@ -547,13 +539,13 @@ class DiskDataStore(DataStore):
                     df = pd.read_csv(path)
                 return df
             elif card.file_type == 'pdb':
+                # Default to returning an mdtraj.Trajectory for PDB files.
+                # Import locally so environments without mdtraj fail with a clear error.
                 try:
-                    out = md.load_pdb(path)
-                    return out
-                except (ImportError, NameError):
-                    # Fallback: return raw PDB file content as text
-                    with open(path, 'r') as f:
-                        return f.read()
+                    import mdtraj as md
+                except ModuleNotFoundError as e:
+                    raise RuntimeError("mdtraj is required to load PDB files; please install mdtraj") from e
+                return md.load_pdb(path)
             elif card.file_type == 'pdbqt':
                 with open(path, 'r') as f:
                     data = f.readlines()
