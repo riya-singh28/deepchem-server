@@ -9,6 +9,7 @@ dependencies:
   - pip
   - pip:
       - pandas
+      - pdbfixer
       - python-multipart
       - fastapi
       - pytest
