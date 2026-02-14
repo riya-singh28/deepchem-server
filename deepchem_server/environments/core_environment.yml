@@ -5,7 +5,6 @@ dependencies:
   - conda-forge::vina
   - conda-forge::openfe=1.1.0
   - conda-forge::openmm=8.0
-  - conda-forge::pdbfixer
   - pip
   - pip:
       - pandas
