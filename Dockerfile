@@ -27,9 +27,7 @@ WORKDIR ${DEEPCHEM_SERVER_HOME}
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER deepchem_server/environments/core_environment.yml /tmp/env.yaml
 
-RUN micromamba shell init --shell bash --root-prefix=~/.local/share/mamba && \
-    micromamba activate base && \
-    pip install setuptools
+RUN pip install setuptools
 
 RUN micromamba install -y -n base -f /tmp/env.yaml && \
     micromamba clean --all --yes && \
