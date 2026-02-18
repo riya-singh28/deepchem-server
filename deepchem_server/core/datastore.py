@@ -14,9 +14,9 @@ import pandas as pd
 from PIL import Image
 from PIL.PngImagePlugin import PngImageFile
 
-from deepchem_server.core import model_mappings
-from deepchem_server.core.address import DeepchemAddress
-from deepchem_server.core.cards import Card, DataCard, ModelCard  # yapf: disable
+from deepchem_server.core.common import model_mappings
+from deepchem_server.core.common.address import DeepchemAddress
+from deepchem_server.core.common.cards import Card, DataCard, ModelCard  # yapf: disable
 
 logger = logging.getLogger(__name__)
 

@@ -7,6 +7,7 @@ dependencies:
   - conda-forge::openmm=8.0
   - pip
   - pip:
+      - setuptools<78
       - pandas
       - python-multipart
       - fastapi

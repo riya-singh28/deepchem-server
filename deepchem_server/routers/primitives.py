@@ -6,8 +6,8 @@ from typing import Annotated, Dict, List, Optional, Union, Any
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Body
 
-from deepchem_server.core import model_mappings
-from deepchem_server.core.feat import featurizer_map
+from deepchem_server.core.common import model_mappings
+from deepchem_server.core.primitives.feat import featurizer_map
 from deepchem_server.utils import parse_boolean_none_values_from_kwargs, run_job, parse_dict_with_datatypes
 
 

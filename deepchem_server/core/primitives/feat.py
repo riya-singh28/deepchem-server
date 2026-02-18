@@ -1,7 +1,6 @@
 import ast
 import multiprocessing as mp
 import os
-import re
 import tempfile
 from typing import Dict, Iterable, List, Optional, Set, Union
 
@@ -9,9 +8,9 @@ import deepchem as dc
 import pandas as pd
 from rdkit import Chem
 
-from deepchem_server.core import config
-from deepchem_server.core.address import DeepchemAddress
-from deepchem_server.core.cards import DataCard
+from deepchem_server.core.common import config
+from deepchem_server.core.common.address import DeepchemAddress
+from deepchem_server.core.common.cards import DataCard
 
 
 featurizer_map = {
@@ -312,7 +311,8 @@ def featurize(
     # TODO: Handle parsing of dictionary via parser
     featurizer = featurizer.lower()
     if featurizer not in featurizer_map:
-        raise ValueError(f"Featurizer not recognized.\nAvailable featurizers: {featurizer_map}")
+        raise ValueError(
+            f"Featurizer {featurizer} not recognized. Available featurizers: {list(featurizer_map.keys())}")
     if dataset_address.endswith('csv'):
         if dataset_column == 'None' or dataset_column is None:
             raise ValueError("Please specify input column.")
@@ -347,19 +347,17 @@ def featurize(
 
     # check if _checkpoint/ folder exists in given output folder in datastore
     available_checkpoints = []
-    _storage_loc = datastore.storage_loc.rstrip("/")
-    pattern = re.compile(fr"{_storage_loc}/{checkpoint_output_key}/_checkpoint/part_\d+_of_\d+\.cdc$")
-    n_core_set: Set[int] = set()
-    for item in datastore._get_datastore_objects(_storage_loc):
-        match = pattern.search(item)
-        if match:
-            card = datastore.get(item)
-            if card and hasattr(card, 'parent') and card.parent == dataset_address:
-                n_core_set.add(card.n_core)
-                available_checkpoints.append(int(card.checkpoint_id))
-                chkpt_tmp_path: str = os.path.join(tempdir.name, f'part{int(card.checkpoint_id)}')
-                chkpt_address = item[:-4]  # removes .cdc
-                datastore.download_object(chkpt_address, chkpt_tmp_path)
+    n_core_set: Set[int] = set[int]()
+    for item in datastore._get_datastore_objects(checkpoint_output_key):
+        if item.endswith("/"):
+            continue
+        card = datastore.get(item)
+        if card and hasattr(card, "parent") and card.parent == dataset_address:
+            n_core_set.add(card.n_core)
+            available_checkpoints.append(int(card.checkpoint_id))
+            chkpt_tmp_path: str = os.path.join(tempdir.name, f"part{int(card.checkpoint_id)}")
+            chkpt_address = item[:-4]  # removes .cdc
+            datastore.download_object(chkpt_address, chkpt_tmp_path)
 
     if len(n_core_set) == 1:
         n_core = list(n_core_set)[0]
@@ -426,5 +424,5 @@ def featurize(
     featurized_address = datastore.upload_data_from_memory(dataset, output_key, card)
 
     if checkpoint_output_key + '/' in datastore.list_data():
-        datastore.delete_object(address=_storage_loc + "/" + checkpoint_output_key, kind='dir')
+        datastore.delete_object(address=checkpoint_output_key, kind="dir")
     return featurized_address

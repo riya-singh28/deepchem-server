@@ -1,12 +1,14 @@
-from typing import Union
+from __future__ import annotations
+
+from typing import Optional
 
 from deepchem_server.core.datastore import DiskDataStore
 
 
-_DATASTORE = None
+_DATASTORE: Optional[DiskDataStore] = None
 
 
-def set_datastore(datastore: Union[DiskDataStore, None]) -> None:
+def set_datastore(datastore: Optional[DiskDataStore]) -> None:
     """Set the global datastore instance.
 
     Parameters
@@ -22,7 +24,7 @@ def set_datastore(datastore: Union[DiskDataStore, None]) -> None:
     _DATASTORE = datastore
 
 
-def get_datastore() -> Union[DiskDataStore, None]:
+def get_datastore() -> Optional[DiskDataStore]:
     """Get the current global datastore instance.
 
     Returns
