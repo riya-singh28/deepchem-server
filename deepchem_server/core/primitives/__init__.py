@@ -12,14 +12,6 @@ from deepchem_server.core.primitives.fep import run_rbfe, collate_rbfe_results
 
 
 __all__ = [
-    "featurize",
-    "train",
-    "infer",
-    "model_evaluator",
-    "train_valid_test_split",
-    "generate_pose",
-    "ComputeWorkflow",
-    "program_map",
-    "run_rbfe",
-    "collate_rbfe_results"
+    "featurize", "train", "infer", "model_evaluator", "train_valid_test_split", "generate_pose", "ComputeWorkflow",
+    "program_map", "run_rbfe", "collate_rbfe_results"
 ]
