@@ -250,7 +250,7 @@ def calculate_dg_values(simulation_results: List[Dict], reference_ligand: str, r
         reference_ligand_dg_value_uncertainty = "0.00 kcal/mol"
 
     for ligand in ligands:
-        ligand_dg_values[ligand] = None  # type : ignore
+        ligand_dg_values[ligand] = None  # type: ignore
 
     ligand_dg_values[reference_ligand] = ExperimentalMeasurement(reference_ligand_dg_value,
                                                                  reference_ligand_dg_value_uncertainty)
