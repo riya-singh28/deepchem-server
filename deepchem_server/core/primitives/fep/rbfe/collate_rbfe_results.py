@@ -4,7 +4,7 @@ import os
 import tempfile
 import pint
 import pandas as pd
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional
 from deepchem_server.core.common import config
 from deepchem_server.core.primitives.fep.rbfe.data_domain_classes.ExperimentalMeasurement import ExperimentalMeasurement
 from deepchem_server.core.common.cards import DataCard
@@ -108,7 +108,10 @@ def collate_rbfe_results(result_file_deepchem_addresses: List[str], reference_li
     )
 
     # Upload the CSV file to the user's deepchem datastore
-    saved_csv_file_name = config.get_datastore().upload_data(output_file_name, 'temp.csv', result_datacard)
+    datastore = config.get_datastore()
+    if datastore is None:
+        raise ValueError("Datastore not set")
+    saved_csv_file_name = datastore.upload_data(output_file_name, 'temp.csv', result_datacard)
 
     # Delete the temporary file
     os.remove('temp.csv')
@@ -137,12 +140,12 @@ def process_input_files(result_file_deepchem_addresses: List[str]):
     Raises
     ------
     Exception
-        Raises a Datastore not set exception if the deepchem datastore is not set.
+        Raises a Datastore not set ValueError if the deepchem datastore is not set.
     """
 
-    # Raise exception if the datastore is not set
-    if config.get_datastore() is None:
-        raise Exception("Datastore not set")
+    datastore = config.get_datastore()
+    if datastore is None:
+        raise ValueError("Datastore not set")
 
     fetched_result_files = []
     simulation_results = []
@@ -153,7 +156,7 @@ def process_input_files(result_file_deepchem_addresses: List[str]):
         try:
             file_name = os.path.basename(deepchem_file_path)
             temp_file_path = os.path.join(tempdir.name, file_name)
-            config.get_datastore().download_object(file_name, temp_file_path)
+            datastore.download_object(file_name, temp_file_path)
             fetched_result_files.append(temp_file_path)
         except Exception:
             logger.error(f"Could not fetch file - {deepchem_file_path}")
@@ -247,7 +250,7 @@ def calculate_dg_values(simulation_results: List[Dict], reference_ligand: str, r
         reference_ligand_dg_value_uncertainty = "0.00 kcal/mol"
 
     for ligand in ligands:
-        ligand_dg_values[ligand] = None
+        ligand_dg_values[ligand] = None # type: ignore
 
     ligand_dg_values[reference_ligand] = ExperimentalMeasurement(reference_ligand_dg_value,
                                                                  reference_ligand_dg_value_uncertainty)
