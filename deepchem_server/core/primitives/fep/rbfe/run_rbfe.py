@@ -1,7 +1,6 @@
 import ast
 import json
 import logging
-import os
 from typing import Dict, Optional, List
 from deepchem_server.core.common import config
 from deepchem_server.core.common.address import DeepchemAddress
