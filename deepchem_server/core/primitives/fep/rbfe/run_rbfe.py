@@ -2,8 +2,7 @@ import ast
 import json
 import logging
 import os
-from typing import Dict, Optional
-
+from typing import Dict, Optional, List
 from deepchem_server.core.common import config
 from deepchem_server.core.common.address import DeepchemAddress
 from deepchem_server.core.common.cards import DataCard
@@ -20,7 +19,7 @@ def run_rbfe(ligands_sdf_address: str,
              overridden_rbfe_settings: str,
              dry_run: bool = False,
              radial_network_central_ligand: Optional[str] = None,
-             output_key: Optional[str] = None) -> list[str]:
+             output_key: Optional[str] = None) -> List[str]:
     """A FEP utility to run RBFE calculations for a protein-solvent-ligand system, for a list of ligands.
 
     If run as an Array Job, Each edge in the perturbation network is run as an independent job within the same AWS Batch array job.
@@ -86,7 +85,7 @@ def run_rbfe(ligands_sdf_address: str,
 
     # The AWS_BATCH_JOB_ARRAY_INDEX environment variable is set by the AWS Runner when running batch array jobs.
     try:
-        AWS_BATCH_JOB_ARRAY_INDEX = int(os.getenv('AWS_BATCH_JOB_ARRAY_INDEX'))  # type: ignore
+        AWS_BATCH_JOB_ARRAY_INDEX = int(os.getenv('AWS_BATCH_JOB_ARRAY_INDEX'))
     except TypeError:
         AWS_BATCH_JOB_ARRAY_INDEX = None
 
@@ -183,7 +182,7 @@ def run_rbfe(ligands_sdf_address: str,
 
         # Write the result to a temporary file.
         with open(f'tmp_{i+1}.json', 'w') as f:
-            f.write(json.dumps(result.__dict__, indent=2))  # type: ignore
+            f.write(json.dumps(result.__dict__, indent=2))
 
         # Upload the result to the datastore.
 
