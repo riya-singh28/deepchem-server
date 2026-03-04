@@ -160,7 +160,7 @@ def test_run_rbfe(patched_run_edge, caplog, protein_datastore_address, ligands_l
 
     # Assert that the log message for AWS Batch confirms unavailability of AWS Batch Environment.
     # assert 'Could not find AWS_BATCH_JOB_ARRAY_INDEX. Running all' in caplog.text
-    # assert len(result_datastore_addresses) == 6
+    assert len(result_datastore_addresses) == 6
 
     tempdir = tempfile.TemporaryDirectory()
 
