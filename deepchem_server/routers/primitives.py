@@ -404,7 +404,7 @@ async def docking_generate_pose(
     return {"docking_results_address": str(result)}
 
 
-@router.post("/run_rbfe")
+@router.post("/rbfe")
 async def relative_binding_free_energy(
     profile_name: Annotated[str, Body()],
     project_name: Annotated[str, Body()],
@@ -477,7 +477,7 @@ async def relative_binding_free_energy(
         )
 
     program: Dict = {
-        "program_name": "run_rbfe",
+        "program_name": "rbfe",
         "ligands_sdf_address": ligands_sdf_address,
         "cleaned_protein_pdb_address": cleaned_protein_pdb_address,
         "network_type": network_type,

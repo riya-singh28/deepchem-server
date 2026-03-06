@@ -69,5 +69,5 @@ class RelativeBindingFreeEnergy(Primitive):
             "network_type": network_type,
             "scorer_type": scorer_type,
         }
-        response = self._post("/primitive/run_rbfe", json=data, headers={"Content-Type": "application/json"})
+        response = self._post("/primitive/rbfe", json=data, headers={"Content-Type": "application/json"})
         return self._validate_response(response)

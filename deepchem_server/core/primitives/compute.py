@@ -17,7 +17,7 @@ program_map = {
     "infer": infer,
     "train_valid_test_split": train_valid_test_split,
     "generate_pose": generate_pose,
-    "run_rbfe": run_rbfe,
+    "rbfe": run_rbfe,
     "collate_rbfe_results": collate_rbfe_results,
 }
 
